@@ -8,7 +8,7 @@
  */
 
 if (!defined('NBR_PLUGIN_NAME')) {
-    define('NBR_VERSION', '1.1');
+    define('NBR_VERSION', '1.0');
 
     define('NBR_EDITION', 'Standard');
 
