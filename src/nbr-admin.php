@@ -5,7 +5,7 @@ https://github.com/Karbovanets/karbo-woocommerce/
 */
 
 // Include everything
-include(dirname(__FILE__) . '/krbwc-include-all.php');
+include(dirname(__FILE__) . '/nbr-include-all.php');
 
 //===========================================================================
 // Global vars.
@@ -14,7 +14,7 @@ global $g_NBR__plugin_directory_url;
 $g_NBR__plugin_directory_url = plugins_url('', __FILE__);
 
 global $g_NBR__cron_script_url;
-$g_NBR__cron_script_url = $g_NBR__plugin_directory_url . '/krbwc-cron.php';
+$g_NBR__cron_script_url = $g_NBR__plugin_directory_url . '/nbr-cron.php';
 
 //===========================================================================
 
@@ -56,7 +56,7 @@ function NBR__GetPluginNameVersionEdition($please_donate = false) // false to tu
 
 
     if ($please_donate) {
-        $return_data .= '<p style="border:1px solid #890e4e;padding:5px 10px;color:#004400;background-color:#FFF;"><u>Please donate KRB to</u>:&nbsp;&nbsp;<span style="color:#d21577;font-size:110%;font-weight:bold;"></span></p>';
+        $return_data .= '<p style="border:1px solid #890e4e;padding:5px 10px;color:#004400;background-color:#FFF;"><u>Please donate NBR to</u>:&nbsp;&nbsp;<span style="color:#d21577;font-size:110%;font-weight:bold;"></span></p>';
     }
 
     return $return_data;
@@ -67,8 +67,8 @@ function NBR__GetPluginNameVersionEdition($please_donate = false) // false to tu
 //===========================================================================
 function NBR__withdraw()
 {
-    $krbwc_settings = NBR__get_settings();
-    $address = $krbwc_settings['address'];
+    $nbr_settings = NBR__get_settings();
+    $address = $nbr_settings['address'];
 
     try {
         $wallet_api = new ForkNoteWalletd("http://127.0.0.1:18888");
@@ -77,7 +77,7 @@ function NBR__withdraw()
     }
 
     if ($address_balance === false) {
-        return "Karbo address is not found in wallet.";
+        return "Niobio Cash address is not found in wallet.";
     } else {
         $address_balance = $address_balance['availableBalance'];
         //round ( float $val [, int $precision = 0 [, int $mode = PHP_ROUND_HALF_UP ]] )
@@ -106,67 +106,67 @@ function NBR__get_settings($key = false)
     global $g_NBR__plugin_directory_url;
     global $g_NBR__config_defaults;
 
-    $krbwc_settings = get_option(NBR_SETTINGS_NAME);
-    if (!is_array($krbwc_settings)) {
-        $krbwc_settings = array();
+    $nbr_settings = get_option(NBR_SETTINGS_NAME);
+    if (!is_array($nbr_settings)) {
+        $nbr_settings = array();
     }
 
     if ($key) {
-        return (@$krbwc_settings[$key]);
+        return (@$nbr_settings[$key]);
     } else {
-        return ($krbwc_settings);
+        return ($nbr_settings);
     }
 }
 
 //===========================================================================
 
 //===========================================================================
-function NBR__update_settings($krbwc_use_these_settings = false, $also_update_persistent_settings = false)
+function NBR__update_settings($nbr_use_these_settings = false, $also_update_persistent_settings = false)
 {
-    if ($krbwc_use_these_settings) {
+    if ($nbrc_use_these_settings) {
         // if ($also_update_persistent_settings)
         //   NBR__update_persistent_settings ($krbwc_use_these_settings);
 
-        update_option(NBR_SETTINGS_NAME, $krbwc_use_these_settings);
+        update_option(NBR_SETTINGS_NAME, $nbr_use_these_settings);
         return;
     }
 
     global $g_NBR__config_defaults;
 
     // Load current settings and overwrite them with whatever values are present on submitted form
-    $krbwc_settings = NBR__get_settings();
+    $nbr_settings = NBR__get_settings();
 
     foreach ($g_NBR__config_defaults as $k => $v) {
         if (isset($_POST[$k])) {
-            if (!isset($krbwc_settings[$k])) {
-                $krbwc_settings[$k] = "";
+            if (!isset($nbr_settings[$k])) {
+                $nbr_settings[$k] = "";
             } // Force set to something.
-            NBR__update_individual_krbwc_setting($krbwc_settings[$k], $_POST[$k]);
+            NBR__update_individual_krbwc_setting($nbr_settings[$k], $_POST[$k]);
         }
         // If not in POST - existing will be used.
     }
 
-    update_option(NBR_SETTINGS_NAME, $krbwc_settings);
+    update_option(NBR_SETTINGS_NAME, $nbr_settings);
 }
 
 //===========================================================================
 
 //===========================================================================
 // Takes care of recursive updating
-function NBR__update_individual_krbwc_setting(&$krbwc_current_setting, $krbwc_new_setting)
+function NBR__update_individual_nbr_setting(&$nbr_current_setting, $nbr_new_setting)
 {
-    if (is_string($krbwc_new_setting)) {
-        $krbwc_current_setting = NBR__stripslashes($krbwc_new_setting);
-    } elseif (is_array($krbwc_new_setting)) {  // Note: new setting may not exist yet in current setting: curr[t5] - not set yet, while new[t5] set.
+    if (is_string($nbr_new_setting)) {
+        $nbr_current_setting = NBR__stripslashes($nbr_new_setting);
+    } elseif (is_array($nbr_new_setting)) {  // Note: new setting may not exist yet in current setting: curr[t5] - not set yet, while new[t5] set.
         // Need to do recursive
-        foreach ($krbwc_new_setting as $k => $v) {
-            if (!isset($krbwc_current_setting[$k])) {
-                $krbwc_current_setting[$k] = "";
+        foreach ($nbr_new_setting as $k => $v) {
+            if (!isset($nbr_current_setting[$k])) {
+                $nbr_current_setting[$k] = "";
             }   // If not set yet - force set it to something.
-            NBR__update_individual_krbwc_setting($krbwc_current_setting[$k], $v);
+            NBR__update_individual_krbwc_setting($nbr_current_setting[$k], $v);
         }
     } else {
-        $krbwc_current_setting = $krbwc_new_setting;
+        $nbr_current_setting = $nbr_new_setting;
     }
 }
 
@@ -184,14 +184,14 @@ function NBR__reset_partial_settings($also_reset_persistent_settings = false)
 
     foreach ($_POST as $k => $v) {
         if (isset($g_NBR__config_defaults[$k])) {
-            if (!isset($krbwc_settings[$k])) {
-                $krbwc_settings[$k] = "";
+            if (!isset($nbr_settings[$k])) {
+                $nbr_settings[$k] = "";
             } // Force set to something.
-            NBR__update_individual_krbwc_setting($krbwc_settings[$k], $g_NBR__config_defaults[$k]);
+            NBR__update_individual_krbwc_setting($nbr_settings[$k], $g_NBR__config_defaults[$k]);
         }
     }
 
-    update_option(NBR_SETTINGS_NAME, $krbwc_settings);
+    update_option(NBR_SETTINGS_NAME, $nbr_settings);
 
     // if ($also_reset_persistent_settings)
     //   NBR__update_persistent_settings ($krbwc_settings);
@@ -235,7 +235,7 @@ function NBR__stripslashes(&$val)
 //===========================================================================
 /*
     ----------------------------------
-    : Table 'krb_payments' :
+    : Table 'nbr_payments' :
     ----------------------------------
       status                "unused"      - never been used address with last known zero balance
                             "assigned"    - order was placed and this address was assigned for payment
@@ -244,16 +244,16 @@ function NBR__stripslashes(&$val)
                             "xused"       - address was used (touched with funds) by unknown entity outside of this application. No metadata is present for this address, will not be able to correlated it with any order.
                             "unknown"     - new address was generated but cannot retrieve balance due to blockchain API failure.
 */
-function NBR__create_database_tables($krbwc_settings)
+function NBR__create_database_tables($nbr_settings)
 {
     global $wpdb;
 
-    $krbwc_settings = NBR__get_settings();
+    $nbr_settings = NBR__get_settings();
     $must_update_settings = false;
 
-    $krb_payments_table_name = $wpdb->prefix . 'nbr_payments';
+    $nbr_payments_table_name = $wpdb->prefix . 'nbr_payments';
 
-    if ($wpdb->get_var("SHOW TABLES LIKE '$krb_payments_table_name'") != $krb_payments_table_name) {
+    if ($wpdb->get_var("SHOW TABLES LIKE '$nbr_payments_table_name'") != $nbr_payments_table_name) {
         $b_first_time = true;
     } else {
         $b_first_time = false;
@@ -261,7 +261,7 @@ function NBR__create_database_tables($krbwc_settings)
 
     //----------------------------------------------------------
     // Create tables
-    $query = "CREATE TABLE IF NOT EXISTS `$krb_payments_table_name` (
+    $query = "CREATE TABLE IF NOT EXISTS `nbr_payments_table_name` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `nbr_address` char(98) NOT NULL,
     `nbr_payment_id` char(64) NOT NULL,
@@ -291,8 +291,8 @@ function NBR__delete_database_tables()
 {
     global $wpdb;
 
-    $krb_payments_table_name = $wpdb->prefix . 'krbwc_krb_payments';
+    $nbr_payments_table_name = $wpdb->prefix . 'nbr_nbr_payments';
 
-    $wpdb->query("DROP TABLE IF EXISTS `$krb_payments_table_name`");
+    $wpdb->query("DROP TABLE IF EXISTS `$nbr_payments_table_name`");
 }
 //===========================================================================
