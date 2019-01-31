@@ -123,7 +123,7 @@ function NBR__get_settings($key = false)
 //===========================================================================
 function NBR__update_settings($nbr_use_these_settings = false, $also_update_persistent_settings = false)
 {
-    if ($nbrc_use_these_settings) {
+    if ($nbr_use_these_settings) {
         // if ($also_update_persistent_settings)
         //   NBR__update_persistent_settings ($krbwc_use_these_settings);
 
@@ -141,7 +141,7 @@ function NBR__update_settings($nbr_use_these_settings = false, $also_update_pers
             if (!isset($nbr_settings[$k])) {
                 $nbr_settings[$k] = "";
             } // Force set to something.
-            NBR__update_individual_krbwc_setting($nbr_settings[$k], $_POST[$k]);
+            NBR__update_individual_nbr_setting($nbr_settings[$k], $_POST[$k]);
         }
         // If not in POST - existing will be used.
     }
@@ -163,7 +163,7 @@ function NBR__update_individual_nbr_setting(&$nbr_current_setting, $nbr_new_sett
             if (!isset($nbr_current_setting[$k])) {
                 $nbr_current_setting[$k] = "";
             }   // If not set yet - force set it to something.
-            NBR__update_individual_krbwc_setting($nbr_current_setting[$k], $v);
+            NBR__update_individual_nbr_setting($nbr_current_setting[$k], $v);
         }
     } else {
         $nbr_current_setting = $nbr_new_setting;
@@ -180,14 +180,14 @@ function NBR__reset_partial_settings($also_reset_persistent_settings = false)
     global $g_NBR__config_defaults;
 
     // Load current settings and overwrite ones that are present on submitted form with defaults
-    $krbwc_settings = NBR__get_settings();
+    $nbr_settings = NBR__get_settings();
 
     foreach ($_POST as $k => $v) {
         if (isset($g_NBR__config_defaults[$k])) {
             if (!isset($nbr_settings[$k])) {
                 $nbr_settings[$k] = "";
             } // Force set to something.
-            NBR__update_individual_krbwc_setting($nbr_settings[$k], $g_NBR__config_defaults[$k]);
+            NBR__update_individual_nbr_setting($nbr_settings[$k], $g_NBR__config_defaults[$k]);
         }
     }
 
