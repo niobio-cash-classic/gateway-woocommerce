@@ -18,7 +18,7 @@ function NBR__render_general_settings_page()
 //===========================================================================
 function NBR__render_settings_page($menu_page_name)
 {
-    $krbwc_settings = NBR__get_settings();
+    $nbr_settings = NBR__get_settings();
     if (isset($_POST['button_withdraw'])) {
         $result = NBR__withdraw();
         echo '
@@ -33,14 +33,14 @@ function NBR__render_settings_page($menu_page_name)
 Settings updated!
 </div>
 HHHH;
-    } elseif (isset($_POST['button_reset_krbwc_settings'])) {
+    } elseif (isset($_POST['button_reset_nbr_settings'])) {
         NBR__reset_all_settings(false);
         echo <<<HHHH
 <div align="center" style="background-color:#FFFFE0;padding:5px;font-size:120%;border: 1px solid #E6DB55;margin:5px;border-radius:3px;">
 All settings reverted to all defaults
 </div>
 HHHH;
-    } elseif (isset($_POST['button_reset_partial_krbwc_settings'])) {
+    } elseif (isset($_POST['button_reset_partial_nbr_settings'])) {
         NBR__reset_partial_settings(false);
         echo <<<HHHH
 <div align="center" style="background-color:#FFFFE0;padding:5px;font-size:120%;border: 1px solid #E6DB55;margin:5px;border-radius:3px;">
@@ -139,7 +139,7 @@ function NBR__render_general_settings_page_html()
         <tr valign="top">
           <th scope="row">Delete all plugin-specific settings, database tables and data on uninstall:</th>
           <td>
-            <input type="hidden" name="delete_db_tables_on_uninstall" value="0" /><input type="checkbox" name="delete_db_tables_on_uninstall" value="1" <?php if ($krbwc_settings['delete_db_tables_on_uninstall']) {
+            <input type="hidden" name="delete_db_tables_on_uninstall" value="0" /><input type="checkbox" name="delete_db_tables_on_uninstall" value="1" <?php if ($nbr_settings['delete_db_tables_on_uninstall']) {
         echo 'checked="checked"';
     } ?> />
             <p class="description">If checked - all plugin-specific settings, database tables and data will be removed from Wordpress database upon plugin uninstall (but not upon deactivation or upgrade).</p>
@@ -252,8 +252,8 @@ function NBR__render_general_settings_page_html()
       </table>
 
       <p class="submit">
-          <input type="submit" class="button-primary"    name="button_update_krbwc_settings"        value="<?php _e('Save Changes') ?>"             />
-          <input type="submit" class="button-secondary"  style="color:red;" name="button_reset_partial_krbwc_settings" value="<?php _e('Reset settings') ?>" onClick="return confirm('Are you sure you want to reset settings on this page?');" />
+          <input type="submit" class="button-primary"    name="button_update_nbr_settings"        value="<?php _e('Save Changes') ?>"             />
+          <input type="submit" class="button-secondary"  style="color:red;" name="button_reset_partial_nbr_settings" value="<?php _e('Reset settings') ?>" onClick="return confirm('Are you sure you want to reset settings on this page?');" />
       </p>
     </form>
 <?php
