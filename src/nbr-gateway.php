@@ -102,8 +102,8 @@ function NBR__plugins_loaded__load_Niobio_Cash_gateway()
                 $valid = false;
             } elseif ($this->service_provider=='local_wallet') {
                 $wallet_api = new ForkNoteWalletd("http://127.0.0.1:18888");
-                $krbwc_settings = NBR__get_settings();
-                $address = $krbwc_settings['address'];
+                $nbr_settings = NBR__get_settings();
+                $address = $nbr_settings['address'];
                 if (!$address) {
                     $reason_message = __("Please specify Wallet Address in Niobio Cash plugin settings.", 'woocommerce');
                     $valid = false;
@@ -674,7 +674,7 @@ function NBR__process_payment_completed_for_order($order_id, $NiobioCash_paid=fa
 
         $order->payment_complete();
 
-        $krbwc_settings = NBR__get_settings();
+        $nbr_settings = NBR__get_settings();
         if ($nbr_settings['autocomplete_paid_orders']) {
             // Ensure order is completed.
             $order->update_status('completed', __('Order marked as completed according to Niobio Cash plugin settings', 'woocommerce'));
