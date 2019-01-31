@@ -29,13 +29,13 @@ Once you have installed and activated WooCommerce, you may install and activate 
 2.  Install "NBR for WooCommerce" wordpress plugin just like any other Wordpress plugin.
 3.  Activate.
 4.  Download and install on your computer Niobio Cash Wallet program from: https://niobiocash.org/
-5.  Copy and setup your wallet on the server. Change permission to executable. Run karbod as a service.
+5.  Copy and setup your wallet on the server. Change permission to executable. Run niobiod as a service.
 6.  Generate Container (optionally reset containter to view only container and add view only address). Run walletd as a service.
 7.  Get your wallet address from walletd.
 8.  Within your site's Wordpress admin, navigate to:
-	    WooCommerce -> Settings -> Checkout -> Karbo
+	    WooCommerce -> Settings -> Checkout -> Niobio Cash
 	    and paste your wallet address into "Wallet Address" field.
-9.  Select "Niobio Cash provider" = "Local Wallet" and fill-in other settings at Karbo management panel.
+9.  Select "Niobio Cash provider" = "Local Wallet" and fill-in other settings at Niobio Cash management panel.
 10. Press [Save changes]
 11. If you do not see any errors - your store is ready for operation and to access payments in NBR!
 
