@@ -207,7 +207,7 @@ function NBR__plugins_loaded__load_Niobio_Cash_gateway()
     <td style="vertical-align:middle;" class="bpit-td-name bpit-td-name-nbraddr">
       ' . __('Payment ID:', 'woocommerce') . '
     </td>
-    <td class="bpit-td-value bpit-td-value-krbaddr">
+    <td class="bpit-td-value bpit-td-value-nbraddr">
       <div style="border:1px solid #FCCA09;padding:2px 6px;margin:2px;background-color:#FCF8E3;border-radius:4px;color:#555;font-weight: bold;font-size: 120%;">
         {{{NBRCOINS_PAYMENTID}}}
       </div>
@@ -217,7 +217,7 @@ function NBR__plugins_loaded__load_Niobio_Cash_gateway()
     <td style="vertical-align:middle;" class="bpit-td-name bpit-td-name-nbraddr">
       ' . __('Address:', 'woocommerce') . '
     </td>
-    <td class="bpit-td-value bpit-td-value-krbaddr">
+    <td class="bpit-td-value bpit-td-value-nbraddr">
       <div style="border:1px solid #FCCA09;padding:2px 6px;margin:2px;background-color:#FCF8E3;border-radius:4px;color:#555;font-weight: bold;font-size: 120%;">
         {{{NBRCOINS_ADDRESS}}}
       </div>
@@ -237,7 +237,7 @@ function NBR__plugins_loaded__load_Niobio_Cash_gateway()
 
             $payment_instructions_description = '
 						  <p class="description" style="width:50%;float:left;width:49%;">
-					    	' . __('Specific instructions given to the customer to complete Karbos payment.<br />You may change it, but make sure these tags will be present: <b>{{{KRBCOINS_AMOUNT}}}</b>, <b>{{{KRBCOINS_PAYMENTID}}}</b>, <b>{{{KRBCOINS_ADDRESS}}}</b> and <b>{{{EXTRA_INSTRUCTIONS}}}</b> as these tags will be replaced with customer - specific payment details.', 'woocommerce') . '
+					    	' . __('Specific instructions given to the customer to complete Karbos payment.<br />You may change it, but make sure these tags will be present: <b>{{{NBRCOINS_AMOUNT}}}</b>, <b>{{{NBRCOINS_PAYMENTID}}}</b>, <b>{{{NBRCOINS_ADDRESS}}}</b> and <b>{{{EXTRA_INSTRUCTIONS}}}</b> as these tags will be replaced with customer - specific payment details.', 'woocommerce') . '
 						  </p>
 						  <p class="description" style="width:50%;float:left;width:49%;">
 					    	Payment Instructions, original template (for reference):<br />
@@ -371,7 +371,7 @@ function NBR__plugins_loaded__load_Niobio_Cash_gateway()
                 exit('<h2 style="color:red;">' . $msg . '</h2>');
             }
 
-            $order_total_in_krb   = ($order->get_total() / $exchange_rate);
+            $order_total_in_nbr   = ($order->get_total() / $exchange_rate);
             if (get_woocommerce_currency() != 'NBR') {
                 // @TODO Apply exchange rate multiplier only for stores with non-Karbo default currency.
                 $order_total_in_nbr = $order_total_in_nbr;
@@ -385,7 +385,7 @@ function NBR__plugins_loaded__load_Niobio_Cash_gateway()
             array(
                 'order_meta'							=> $order_meta,
                 'order_id'								=> $order_id,
-                'order_total'			    	 	=> $order_total_in_nbr,  // Order total in KRB
+                'order_total'			    	 	=> $order_total_in_nbr,  // Order total in NBR
                 'order_datetime'  				=> date('Y-m-d H:i:s T'),
                 'requested_by_ip'					=> @$_SERVER['REMOTE_ADDR'],
                 'requested_by_ua'					=> @$_SERVER['HTTP_USER_AGENT'],
