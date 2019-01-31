@@ -72,7 +72,7 @@ function NBR_cron_job_worker($hardcron=false)
             $address_request_array['nbr_address'] = $row_for_balance_check['nbr_address'];
             $address_request_array['block_index'] = $row_for_balance_check['index_in_wallet'];
             $address_request_array['required_confirmations'] = $confirmations_required;
-            $address_request_array['api_timeout'] = $krbwc_settings['blockchain_api_timeout_secs'];
+            $address_request_array['api_timeout'] = $nbr_settings['blockchain_api_timeout_secs'];
             $balance_info_array = NBR__getreceivedbyaddress_info($address_request_array, $nbr_settings);
 
             $last_order_info = @$address_request_array['address_meta']['orders'][0];
