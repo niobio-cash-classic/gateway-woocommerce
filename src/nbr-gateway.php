@@ -43,7 +43,7 @@ function NBR__plugins_loaded__load_Niobio_Cash_gateway()
         public function __construct()
         {
             $this->id				= 'Niobio Cash';
-            $this->icon 			= plugins_url('/images/nbr32.png', __FILE__);	// 32 pixels high
+            $this->icon 			= plugins_url('/images/nbr_32x.png', __FILE__);	// 32 pixels high
             $this->has_fields 		= false;
             $this->method_title     = __('Niobio Cash', 'woocommerce');
 
