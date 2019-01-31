@@ -6,18 +6,18 @@ https://github.com/Karbovanets/karbo-woocommerce/
 
 
 //===========================================================================
-function NBR__generate_new_Karbo_payment_id($krbwc_settings=false, $order_info)
+function NBR__generate_new_Niobio_Cash_payment_id($nbr_settings=false, $order_info)
 {
     global $wpdb;
 
-    $krb_payments_table_name = $wpdb->prefix . 'krbwc_krb_payments';
+    $nbr_payments_table_name = $wpdb->prefix . 'nbr_nbr_payments';
 
-    if (!$krbwc_settings) {
-        $krbwc_settings = NBR__get_settings();
+    if (!$nbr_settings) {
+        $nbr_settings = NBR__get_settings();
     }
 
     $wallet_api = new ForkNoteWalletd("http://127.0.0.1:18888");
-    $new_krb_payment_id = $wallet_api->makePaymentId();
+    $new_nbr_payment_id = $wallet_api->makePaymentId();
 
     try {
         $status = $wallet_api->getStatus();
@@ -26,17 +26,17 @@ function NBR__generate_new_Karbo_payment_id($krbwc_settings=false, $order_info)
         $next_key_index = 0;
     }
 
-    $krb_address = $krbwc_settings['address'];
+    $nbr_address = $nbr_settings['address'];
 
     $address_request_array = array();
 
     // Retrieve current balance at address considering required confirmations number and api_timemout value.
-    $address_request_array['krb_address'] = $krb_address;
-    $address_request_array['krb_payment_id'] = $new_krb_payment_id;
+    $address_request_array['nbr_address'] = $nbr_address;
+    $address_request_array['nbr_payment_id'] = $new_nbr_payment_id;
     $address_request_array['block_index'] = 100000; //@TODO variable for starting block to check for payment id
     $address_request_array['required_confirmations'] = 0;
-    $address_request_array['api_timeout'] = $krbwc_settings['blockchain_api_timeout_secs'];
-    $ret_info_array = NBR__getreceivedbyaddress_info($address_request_array, $krbwc_settings);
+    $address_request_array['api_timeout'] = $nbr_settings['blockchain_api_timeout_secs'];
+    $ret_info_array = NBR__getreceivedbyaddress_info($address_request_array, $nbr_settings);
     // $total_new_keys_generated ++;
 
     if ($ret_info_array['balance'] === false) {
@@ -59,10 +59,10 @@ function NBR__generate_new_Karbo_payment_id($krbwc_settings=false, $order_info)
     //$remote_addr  = $order_info['requested_by_ip'];
 
     // Insert newly generated address into DB
-    $query = "INSERT INTO `$krb_payments_table_name` (`krb_address`, `krb_payment_id`, `origin_id`, `index_in_wallet`, `status`, `total_received_funds`, `received_funds_checked_at`, `assigned_at`, `address_meta`) VALUES ('$krb_address', '$new_krb_payment_id', 'none', '$next_key_index', '$status', '$funds_received', '$received_funds_checked_at_time', '$assigned_at_time', '$address_meta_serialized');";
+    $query = "INSERT INTO `$krb_payments_table_name` (`nbr_address`, `nbr_payment_id`, `origin_id`, `index_in_wallet`, `status`, `total_received_funds`, `received_funds_checked_at`, `assigned_at`, `address_meta`) VALUES ('$nbr_address', '$new_nbr_payment_id', 'none', '$next_key_index', '$status', '$funds_received', '$received_funds_checked_at_time', '$assigned_at_time', '$address_meta_serialized');";
     $ret_code = $wpdb->query($query);
 
-    return $new_krb_payment_id;
+    return $new_nbr_payment_id;
 }
 //===========================================================================
 
@@ -102,14 +102,14 @@ $ret_info_array = array (
   );
 */
 
-function NBR__getreceivedbyaddress_info($address_request_array, $krbwc_settings=false)
+function NBR__getreceivedbyaddress_info($address_request_array, $nbr_settings=false)
 {
-    if (!$krbwc_settings) {
-        $krbwc_settings = NBR__get_settings();
+    if (!$nbr_settings) {
+        $nbr_settings = NBR__get_settings();
     }
 
-    $krb_address            = $address_request_array['krb_address'];
-    $krb_payment_id         = $address_request_array['krb_payment_id'];
+    $nbr_address            = $address_request_array['nbr_address'];
+    $nbr_payment_id         = $address_request_array['nbr_payment_id'];
     $first_block_index      = $address_request_array['block_index'];
     $required_confirmations = $address_request_array['required_confirmations'];
     $api_timeout            = $address_request_array['api_timeout'];
@@ -118,7 +118,7 @@ function NBR__getreceivedbyaddress_info($address_request_array, $krbwc_settings=
     $fnw = new ForkNoteWalletd("http://127.0.0.1:18888");
     $status = $fnw->getStatus();
 
-    $t = $fnw->getTransactions($status["blockCount"] - 50000, false, 50000, $krb_payment_id, [$krb_address]);
+    $t = $fnw->getTransactions($status["blockCount"] - 50000, false, 50000, $nbr_payment_id, [$nb_address]);
     // print_r( $t );
 
     $total = 0;
@@ -175,15 +175,15 @@ function NBR__getreceivedbyaddress_info($address_request_array, $krbwc_settings=
 //
 // $get_ticker_string - true - HTML formatted text message instead of pure number returned.
 
-function NBR__get_exchange_rate_per_Karbo($currency_code, $rate_retrieval_method = 'getfirst', $get_ticker_string=false)
+function NBR__get_exchange_rate_per_Niobio_Cash($currency_code, $rate_retrieval_method = 'getfirst', $get_ticker_string=false)
 {
-    if ($currency_code == 'KRB') {
+    if ($currency_code == 'NB') {
         return "1.00";
     }   // 1:1
 
-    $krbwc_settings = NBR__get_settings();
-    $exchange_rate_type = $krbwc_settings['exchange_rate_type'];
-    $exchange_multiplier = $krbwc_settings['exchange_multiplier'];
+    $nbr_settings = NBR__get_settings();
+    $exchange_rate_type = $nbr_settings['exchange_rate_type'];
+    $exchange_multiplier = $nbr_settings['exchange_multiplier'];
     if (!$exchange_multiplier) {
         $exchange_multiplier = 1;
     }
@@ -195,10 +195,10 @@ function NBR__get_exchange_rate_per_Karbo($currency_code, $rate_retrieval_method
     $ticker_string_error = "<span style='color:red;background-color:#FFA'>WARNING: Cannot determine exchange rates (for '$currency_code')! {{{ERROR_MESSAGE}}} Make sure your PHP settings are configured properly and your server can (is allowed to) connect to external WEB services via PHP.</wspan>";
 
 
-    $this_currency_info = @$krbwc_settings['exchange_rates'][$currency_code][$requested_cache_method_type];
+    $this_currency_info = @$nbr_settings['exchange_rates'][$currency_code][$requested_cache_method_type];
     if ($this_currency_info && isset($this_currency_info['time-last-checked'])) {
         $delta = $current_time - $this_currency_info['time-last-checked'];
-        if ($delta < (@$krbwc_settings['cache_exchange_rates_for_minutes'] * 60)) {
+        if ($delta < (@$nbr_settings['cache_exchange_rates_for_minutes'] * 60)) {
 
          // Exchange rates cache hit
             // Use cached value as it is still fresh.
@@ -211,7 +211,7 @@ function NBR__get_exchange_rate_per_Karbo($currency_code, $rate_retrieval_method
         }
     }
 
-    $exchange_rate = NBR__get_exchange_rate_from_cryptocompare($currency_code, $exchange_rate_type, $krbwc_settings);
+    $exchange_rate = NBR__get_exchange_rate_from_cryptocompare($currency_code, $exchange_rate_type, $nbr_settings);
 
     // Save new currency exchange rate info in cache
     NBR__update_exchange_rate_cache($currency_code, $requested_cache_method_type, $exchange_rate);
@@ -247,19 +247,19 @@ function NBR__function_not_exists($fname)
 function NBR__update_exchange_rate_cache($currency_code, $requested_cache_method_type, $exchange_rate)
 {
     // Save new currency exchange rate info in cache
-  $krbwc_settings = NBR__get_settings();   // Re-get settings in case other piece updated something while we were pulling exchange rate API's...
-  $krbwc_settings['exchange_rates'][$currency_code][$requested_cache_method_type]['time-last-checked'] = time();
-    $krbwc_settings['exchange_rates'][$currency_code][$requested_cache_method_type]['exchange_rate'] = $exchange_rate;
-    NBR__update_settings($krbwc_settings);
+  $nb_settings = NBR__get_settings();   // Re-get settings in case other piece updated something while we were pulling exchange rate API's...
+  $nbr_settings['exchange_rates'][$currency_code][$requested_cache_method_type]['time-last-checked'] = time();
+    $nbr_settings['exchange_rates'][$currency_code][$requested_cache_method_type]['exchange_rate'] = $exchange_rate;
+    NBR__update_settings($nbr_settings);
 }
 //===========================================================================
 
 //===========================================================================
 // $rate_type: 'vwap' | 'realtime' | 'bestrate'
-function NBR__get_exchange_rate_from_cryptocompare($currency_code, $rate_type, $krbwc_settings)
+function NBR__get_exchange_rate_from_cryptocompare($currency_code, $rate_type, $nbr_settings)
 {
     $source_url = "https://min-api.cryptocompare.com/data/price?fsym=KRB&tsyms=" . $currency_code;
-    $result = @NBR__file_get_contents($source_url, false, $krbwc_settings['exchange_rate_api_timeout_secs']);
+    $result = @NBR__file_get_contents($source_url, false, $nbr_settings['exchange_rate_api_timeout_secs']);
 
     $rate_obj = @json_decode(trim($result), true);
 
@@ -403,7 +403,7 @@ function NBR__safe_string_escape($str="")
 function NBR__log_event($filename, $linenum, $message, $prepend_path="", $log_file_name='__log.php')
 {
     $log_filename   = dirname(__FILE__) . $prepend_path . '/' . $log_file_name;
-    $logfile_header = "<?php exit(':-)'); ?>\n" . '/* =============== KarboWC LOG file =============== */' . "\r\n";
+    $logfile_header = "<?php exit(':-)'); ?>\n" . '/* =============== Niobio Cash LOG file =============== */' . "\r\n";
     $logfile_tail   = "\r\nEND";
 
     // Delete too long logfiles.
@@ -470,15 +470,15 @@ function NBR__send_email($email_to, $email_from, $subject, $plain_body)
 function NBR__is_gateway_valid_for_use(&$ret_reason_message=null)
 {
     $valid = true;
-    $krbwc_settings = NBR__get_settings();
+    $nbr_settings = NBR__get_settings();
 
     ////   'service_provider'                     =>  'local_wallet',    // 'blockchain_info'
 
     //----------------------------------
     // Validate settings
-    if ($krbwc_settings['service_provider']=='local_wallet') {
-        $krbwc_settings = NBR__get_settings();
-        $address = $krbwc_settings['address'];
+    if ($nbr_settings['service_provider']=='local_wallet') {
+        $nbr_settings = NBR__get_settings();
+        $address = $nbr_settings['address'];
 
         try {
             $wallet_api = new ForkNoteWalletd("http://127.0.0.1:18888");
@@ -487,7 +487,7 @@ function NBR__is_gateway_valid_for_use(&$ret_reason_message=null)
         }
 
         if (!$address) {
-            $reason_message = __("Please specify Wallet Address in Karbo plugin settings.", 'woocommerce');
+            $reason_message = __("Please specify Wallet Address in NBR plugin settings.", 'woocommerce');
             $valid = false;
         }
         // @TODO
@@ -498,7 +498,7 @@ function NBR__is_gateway_valid_for_use(&$ret_reason_message=null)
         // }
 
         elseif ($address_balance === false) {
-            $reason_message = __("Karbo address is not found in wallet.", 'woocommerce');
+            $reason_message = __("Niobio Cash address is not found in wallet.", 'woocommerce');
             $valid = false;
         }
     }
@@ -516,7 +516,7 @@ function NBR__is_gateway_valid_for_use(&$ret_reason_message=null)
     // Validate connection to exchange rate services
 
     $store_currency_code = 'USD';
-    if ($store_currency_code != 'KRB') {
+    if ($store_currency_code != 'NBR') {
         $currency_rate = NBR__get_exchange_rate_per_Karbo($store_currency_code, 'getfirst', false);
         if (!$currency_rate) {
             $valid = false;
