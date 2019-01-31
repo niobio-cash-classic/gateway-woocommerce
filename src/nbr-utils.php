@@ -59,7 +59,7 @@ function NBR__generate_new_Niobio_Cash_payment_id($nbr_settings=false, $order_in
     //$remote_addr  = $order_info['requested_by_ip'];
 
     // Insert newly generated address into DB
-    $query = "INSERT INTO `$krb_payments_table_name` (`nbr_address`, `nbr_payment_id`, `origin_id`, `index_in_wallet`, `status`, `total_received_funds`, `received_funds_checked_at`, `assigned_at`, `address_meta`) VALUES ('$nbr_address', '$new_nbr_payment_id', 'none', '$next_key_index', '$status', '$funds_received', '$received_funds_checked_at_time', '$assigned_at_time', '$address_meta_serialized');";
+    $query = "INSERT INTO `$nbr_payments_table_name` (`nbr_address`, `nbr_payment_id`, `origin_id`, `index_in_wallet`, `status`, `total_received_funds`, `received_funds_checked_at`, `assigned_at`, `address_meta`) VALUES ('$nbr_address', '$new_nbr_payment_id', 'none', '$next_key_index', '$status', '$funds_received', '$received_funds_checked_at_time', '$assigned_at_time', '$address_meta_serialized');";
     $ret_code = $wpdb->query($query);
 
     return $new_nbr_payment_id;
