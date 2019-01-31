@@ -5,7 +5,7 @@ Niobio Cash for WooCommerce is a Wordpress plugin that allows merchants to accep
 == Description ==
 
 Your online store must use WooCommerce platform (free wordpress plugin).
-Once you have installed and activated WooCommerce, you may install and activate Karbo for WooCommerce.
+Once you have installed and activated WooCommerce, you may install and activate NBR for WooCommece.
 
 = Benefits =
 
