@@ -34,29 +34,29 @@ function NBR_activate()
 {
     global  $g_NBR__config_defaults;
 
-    $krbwc_default_options = $g_NBR__config_defaults;
+    $nbr_default_options = $g_NBR__config_defaults;
 
     // This will overwrite default options with already existing options but leave new options (in case of upgrading to new version) untouched.
-    $krbwc_settings = NBR__get_settings();
+    $nbr_settings = NBR__get_settings();
 
-    foreach ($krbwc_settings as $key=>$value) {
-        $krbwc_default_options[$key] = $value;
+    foreach ($nbr_settings as $key=>$value) {
+        $nbr_default_options[$key] = $value;
     }
 
-    update_option(NBR_SETTINGS_NAME, $krbwc_default_options);
+    update_option(NBR_SETTINGS_NAME, $nbr_default_options);
 
     // Re-get new settings.
-    $krbwc_settings = NBR__get_settings();
+    $nbr_settings = NBR__get_settings();
 
     // Create necessary database tables if not already exists...
-    NBR__create_database_tables($krbwc_settings);
+    NBR__create_database_tables($nbr_settings);
     NBR__SubIns();
 
     //----------------------------------
     // Setup cron jobs
 
-    if ($krbwc_settings['enable_soft_cron_job'] && !wp_next_scheduled('NBR_cron_action')) {
-        $cron_job_schedule_name = $krbwc_settings['soft_cron_job_schedule_name'];
+    if ($nbr_settings['enable_soft_cron_job'] && !wp_next_scheduled('NBR_cron_action')) {
+        $cron_job_schedule_name = $nbr_settings['soft_cron_job_schedule_name'];
         wp_schedule_event(time(), $cron_job_schedule_name, 'NBR_cron_action');
     }
     //----------------------------------
@@ -92,9 +92,9 @@ function NBR_deactivate()
 // uninstalling
 function NBR_uninstall()
 {
-    $krbwc_settings = NBR__get_settings();
+    $nbr_settings = NBR__get_settings();
 
-    if ($krbwc_settings['delete_db_tables_on_uninstall']) {
+    if ($nbr_settings['delete_db_tables_on_uninstall']) {
         // delete all settings.
         delete_option(NBR_SETTINGS_NAME);
 
@@ -114,17 +114,17 @@ function NBR_create_menu()
         __('Woo NBR', NBR_I18N_DOMAIN),                    // Page title
         __('Niobio Cash', NBR_I18N_DOMAIN),                        // Menu Title - lower corner of admin menu
         'administrator',                                        // Capability
-        'krbwc-settings',                                        // Handle - First submenu's handle must be equal to parent's handle to avoid duplicate menu entry.
+        'nbr-settings',                                        // Handle - First submenu's handle must be equal to parent's handle to avoid duplicate menu entry.
         'NBR__render_general_settings_page',                   // Function
-        plugins_url('/images/karbo_16x.png', __FILE__)      // Icon URL
+        plugins_url('/images/nbr_16x.png', __FILE__)      // Icon URL
         );
 
     add_submenu_page(
-        'krbwc-settings',                                        // Parent
+        'nbr-settings',                                        // Parent
         __("WooCommerce Niobio Cash Gateway", NBR_I18N_DOMAIN),                   // Page title
         __("General Settings", NBR_I18N_DOMAIN),               // Menu Title
         'administrator',                                        // Capability
-        'krbwc-settings',                                        // Handle - First submenu's handle must be equal to parent's handle to avoid duplicate menu entry.
+        'nbr-settings',                                        // Handle - First submenu's handle must be equal to parent's handle to avoid duplicate menu entry.
         'NBR__render_general_settings_page'                    // Function
         );
 }

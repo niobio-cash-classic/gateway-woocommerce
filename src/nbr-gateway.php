@@ -1,18 +1,18 @@
 <?php
 /*
-Karbo for WooCommerce
-https://github.com/Karbovanets/karbo-woocommerce/
+NiobioCash for WooCommerce
+https://github.com/niobio-cash/gateway-woocommerce
 */
 
 
 //---------------------------------------------------------------------------
-add_action('plugins_loaded', 'NBR__plugins_loaded__load_Karbo_gateway', 0);
+add_action('plugins_loaded', 'NBR__plugins_loaded__load_NiobioCash_gateway', 0);
 //---------------------------------------------------------------------------
 
 //###########################################################################
 // Hook payment gateway into WooCommerce
 
-function NBR__plugins_loaded__load_Karbo_gateway()
+function NBR__plugins_loaded__load_NiobioCash_gateway()
 {
     if (!class_exists('WC_Payment_Gateway')) {
         // Nothing happens here because WooCommerce is not loaded
@@ -21,17 +21,17 @@ function NBR__plugins_loaded__load_Karbo_gateway()
 
     //=======================================================================
     /**
-     * Karbo Payment Gateway
+     * NiobioCash Payment Gateway
      *
-     * Provides a Karbo Payment Gateway
+     * Provides a NiobioCash Payment Gateway
      *
-     * @class 		NBR_Karbo
+     * @class 		NBR_NiobioCash
      * @extends		WC_Payment_Gateway
      * @version
      * @package
      * @author 		KittyCatTech
      */
-    class NBR_Karbo extends WC_Payment_Gateway
+    class NBR_NiobioCash extends WC_Payment_Gateway
     {
         //-------------------------------------------------------------------
         /**
@@ -42,14 +42,14 @@ function NBR__plugins_loaded__load_Karbo_gateway()
          */
         public function __construct()
         {
-            $this->id				= 'Karbo';
-            $this->icon 			= plugins_url('/images/krb_buyitnow_32x.png', __FILE__);	// 32 pixels high
+            $this->id				= 'NiobioCash';
+            $this->icon 			= plugins_url('/images/nbr_buyitnow_32x.png', __FILE__);	// 32 pixels high
             $this->has_fields 		= false;
-            $this->method_title     = __('Karbo', 'woocommerce');
+            $this->method_title     = __('NiobioCash', 'woocommerce');
 
-            // Load KRBWC settings.
-            $krbwc_settings = NBR__get_settings();
-            $this->service_provider = $krbwc_settings['service_provider']; // This need to be before $this->init_settings otherwise it generate PHP Notice: "Undefined property: NBR_Karbo::$service_provider" down below.
+            // Load nbr settings.
+            $nbr_settings = NBR__get_settings();
+            $this->service_provider = $nbr_settings['service_provider']; // This need to be before $this->init_settings otherwise it generate PHP Notice: "Undefined property: NBR_NiobioCash::$service_provider" down below.
 
             // Load the form fields.
             $this->init_form_fields();
@@ -57,9 +57,9 @@ function NBR__plugins_loaded__load_Karbo_gateway()
 
             // Define user set variables
             $this->title 		= $this->settings['title'];	// The title which the user is shown on the checkout – retrieved from the settings which init_settings loads.
-            $this->Karbo_addr_merchant = $this->settings['Karbo_addr_merchant'];	// Forwarding address where all product payments will aggregate.
-            
-            $this->confs_num = $krbwc_settings['confs_num'];  //$this->settings['confirmations'];
+            $this->NiobioCash_addr_merchant = $this->settings['NiobioCash_addr_merchant'];	// Forwarding address where all product payments will aggregate.
+
+            $this->confs_num = $nbr_settings['confs_num'];  //$this->settings['confirmations'];
             $this->description 	= $this->settings['description'];	// Short description about the gateway which is shown on checkout.
             $this->instructions = $this->settings['instructions'];	// Detailed payment instructions for the buyer.
             $this->instructions_multi_payment_str  = __('You may send payments from multiple accounts to reach the total required.', 'woocommerce');
@@ -98,23 +98,23 @@ function NBR__plugins_loaded__load_Karbo_gateway()
             //----------------------------------
             // Validate settings
             if (!$this->service_provider) {
-                $reason_message = __("Karbo Service Provider is not selected", 'woocommerce');
+                $reason_message = __("NiobioCash Service Provider is not selected", 'woocommerce');
                 $valid = false;
             } elseif ($this->service_provider=='local_wallet') {
                 $wallet_api = new ForkNoteWalletd("http://127.0.0.1:18888");
-                $krbwc_settings = NBR__get_settings();
-                $address = $krbwc_settings['address'];
+                $nbr_settings = NBR__get_settings();
+                $address = $nbr_settings['address'];
                 if (!$address) {
-                    $reason_message = __("Please specify Wallet Address in Karbo plugin settings.", 'woocommerce');
+                    $reason_message = __("Please specify Wallet Address in NiobioCash plugin settings.", 'woocommerce');
                     $valid = false;
                 }
                 // else if (!preg_match ('/^xpub[a-zA-Z0-9]{98}$/', $address))
                 // {
-                // 	$reason_message = __("Karbo Address ($address) is invalid. Must be 98 characters long, consisting of digits and letters.", 'woocommerce');
+                // 	$reason_message = __("NiobioCash Address ($address) is invalid. Must be 98 characters long, consisting of digits and letters.", 'woocommerce');
                 // 	$valid = false;
                 // }
                 elseif ($wallet_api->getBalance($address) === false) {
-                    $reason_message = __("Karbo address is not found in wallet.", 'woocommerce');
+                    $reason_message = __("NiobioCash address is not found in wallet.", 'woocommerce');
                     $valid = false;
                 }
             }
@@ -131,8 +131,8 @@ function NBR__plugins_loaded__load_Karbo_gateway()
             // Validate connection to exchange rate services
 
             $store_currency_code = get_woocommerce_currency();
-            if ($store_currency_code != 'KRB') {
-                $currency_rate = NBR__get_exchange_rate_per_Karbo($store_currency_code, 'getfirst', false);
+            if ($store_currency_code != 'NBR') {
+                $currency_rate = NBR__get_exchange_rate_per_NiobioCash($store_currency_code, 'getfirst', false);
                 if (!$currency_rate) {
                     $valid = false;
 
@@ -177,49 +177,49 @@ function NBR__plugins_loaded__load_Karbo_gateway()
             //-----------------------------------
             // Assemble currency ticker.
             $store_currency_code = get_woocommerce_currency();
-            if ($store_currency_code == 'KRB') {
+            if ($store_currency_code == 'NBR') {
                 $currency_code = 'USD';
             } else {
                 $currency_code = $store_currency_code;
             }
 
-            $currency_ticker = NBR__get_exchange_rate_per_Karbo($currency_code, 'getfirst', true);
+            $currency_ticker = NBR__get_exchange_rate_per_NiobioCash($currency_code, 'getfirst', true);
             //-----------------------------------
 
             //-----------------------------------
             // Payment instructions
             $payment_instructions = '
-<table class="krbwc-payment-instructions-table" id="krbwc-payment-instructions-table">
+<table class="nbr-payment-instructions-table" id="nbr-payment-instructions-table">
   <tr class="bpit-table-row">
-    <td colspan="2">' . __('Please send your Karbo payment as follows:', 'woocommerce') . '</td>
+    <td colspan="2">' . __('Please send your NiobioCash payment as follows:', 'woocommerce') . '</td>
   </tr>
   <tr class="bpit-table-row">
     <td style="vertical-align:middle;" class="bpit-td-name bpit-td-name-amount">
-      ' . __('Amount', 'woocommerce') . ' (<strong>KRB</strong>):
+      ' . __('Amount', 'woocommerce') . ' (<strong>NBR</strong>):
     </td>
     <td class="bpit-td-value bpit-td-value-amount">
       <div style="border:1px solid #FCCA09;padding:2px 6px;margin:2px;background-color:#FCF8E3;border-radius:4px;color:#CC0000;font-weight: bold;font-size: 120%;">
-      	{{{KRBCOINS_AMOUNT}}}
+      	{{{NBRCOINS_AMOUNT}}}
       </div>
     </td>
   </tr>
     <tr class="bpit-table-row">
-    <td style="vertical-align:middle;" class="bpit-td-name bpit-td-name-krbaddr">
+    <td style="vertical-align:middle;" class="bpit-td-name bpit-td-name-nbraddr">
       ' . __('Payment ID:', 'woocommerce') . '
     </td>
-    <td class="bpit-td-value bpit-td-value-krbaddr">
+    <td class="bpit-td-value bpit-td-value-nbraddr">
       <div style="border:1px solid #FCCA09;padding:2px 6px;margin:2px;background-color:#FCF8E3;border-radius:4px;color:#555;font-weight: bold;font-size: 120%;">
-        {{{KRBCOINS_PAYMENTID}}}
+        {{{NBRCOINS_PAYMENTID}}}
       </div>
     </td>
   </tr>
   <tr class="bpit-table-row">
-    <td style="vertical-align:middle;" class="bpit-td-name bpit-td-name-krbaddr">
+    <td style="vertical-align:middle;" class="bpit-td-name bpit-td-name-nbraddr">
       ' . __('Address:', 'woocommerce') . '
     </td>
-    <td class="bpit-td-value bpit-td-value-krbaddr">
+    <td class="bpit-td-value bpit-td-value-nbraddr">
       <div style="border:1px solid #FCCA09;padding:2px 6px;margin:2px;background-color:#FCF8E3;border-radius:4px;color:#555;font-weight: bold;font-size: 120%;">
-        {{{KRBCOINS_ADDRESS}}}
+        {{{NBRCOINS_ADDRESS}}}
       </div>
     </td>
   </tr>
@@ -237,7 +237,7 @@ function NBR__plugins_loaded__load_Karbo_gateway()
 
             $payment_instructions_description = '
 						  <p class="description" style="width:50%;float:left;width:49%;">
-					    	' . __('Specific instructions given to the customer to complete Karbos payment.<br />You may change it, but make sure these tags will be present: <b>{{{KRBCOINS_AMOUNT}}}</b>, <b>{{{KRBCOINS_PAYMENTID}}}</b>, <b>{{{KRBCOINS_ADDRESS}}}</b> and <b>{{{EXTRA_INSTRUCTIONS}}}</b> as these tags will be replaced with customer - specific payment details.', 'woocommerce') . '
+					    	' . __('Specific instructions given to the customer to complete NiobioCashs payment.<br />You may change it, but make sure these tags will be present: <b>{{{NBRCOINS_AMOUNT}}}</b>, <b>{{{NBRCOINS_PAYMENTID}}}</b>, <b>{{{NBRCOINS_ADDRESS}}}</b> and <b>{{{EXTRA_INSTRUCTIONS}}}</b> as these tags will be replaced with customer - specific payment details.', 'woocommerce') . '
 						  </p>
 						  <p class="description" style="width:50%;float:left;width:49%;">
 					    	Payment Instructions, original template (for reference):<br />
@@ -251,22 +251,22 @@ function NBR__plugins_loaded__load_Karbo_gateway()
                 'enabled' => array(
                                 'title' => __('Enable/Disable', 'woocommerce'),
                                 'type' => 'checkbox',
-                                'label' => __('Enable Karbo', 'woocommerce'),
+                                'label' => __('Enable NiobioCash', 'woocommerce'),
                                 'default' => 'yes'
                             ),
                 'title' => array(
                                 'title' => __('Title', 'woocommerce'),
                                 'type' => 'text',
                                 'description' => __('This controls the title which the user sees during checkout.', 'woocommerce'),
-                                'default' => __('Karbo Payment', 'woocommerce')
+                                'default' => __('NiobioCash Payment', 'woocommerce')
                             ),
 
-                'Karbo_addr_merchant' => array(
-                                'title' => __('Karbo Address', 'woocommerce'),
+                'NiobioCash_addr_merchant' => array(
+                                'title' => __('NiobioCash Address', 'woocommerce'),
                                 'type' => 'text',
                                 'css'     => '',
                                 'disabled' => false,
-                                'description' => __('Your Karbo address where customer sends you payment for the product. It must be in your walletd container.', 'woocommerce'),
+                                'description' => __('Your NiobioCash address where customer sends you payment for the product. It must be in your walletd container.', 'woocommerce'),
                                 'default' => '',
                             ),
 
@@ -299,18 +299,18 @@ function NBR__plugins_loaded__load_Karbo_gateway()
             $store_valid    = NBR__is_gateway_valid_for_use($validation_msg);
 
             // After defining the options, we need to display them too; thats where this next function comes into play: ?>
-	    	<h3><?php _e('Karbo Payment', 'woocommerce'); ?></h3>
+	    	<h3><?php _e('NiobioCash Payment', 'woocommerce'); ?></h3>
 	    	<p>
 	    		<?php _e(
-                'Allows WooCommerce to accept payments in Karbo.',
+                'Allows WooCommerce to accept payments in NiobioCash.',
                         'woocommerce'
             ); ?>
 	    	</p>
 	    	<?php
                 echo $store_valid ? ('<p style="border:1px solid #DDD;padding:5px 10px;font-weight:bold;color:#004400;background-color:#CCFFCC;">' .
-            __('Karbo payment gateway is operational', 'woocommerce') .
+            __('NiobioCash payment gateway is operational', 'woocommerce') .
             '</p>') : ('<p style="border:1px solid #DDD;padding:5px 10px;font-weight:bold;color:#EE0000;background-color:#FFFFAA;">' .
-            __('Karbo payment gateway is not operational (try to re-enter and save Karbo Plugin settings): ', 'woocommerce') . $validation_msg . '</p>'); ?>
+            __('NiobioCash payment gateway is not operational (try to re-enter and save NiobioCash Plugin settings): ', 'woocommerce') . $validation_msg . '</p>'); ?>
 	    	<table class="form-table">
 	    	<?php
                 // Generate the HTML For the settings form.
@@ -341,51 +341,51 @@ function NBR__plugins_loaded__load_Karbo_gateway()
          */
         public function process_payment($order_id)
         {
-            $krbwc_settings = NBR__get_settings();
+            $nbr_settings = NBR__get_settings();
             $order = new WC_Order($order_id);
 
             // TODO: Implement CRM features within store admin dashboard
             $order_meta = array();
-            $order_meta['krb_order'] = $order;
-            $order_meta['krb_items'] = $order->get_items();
-            $order_meta['krb_b_addr'] = $order->get_formatted_billing_address();
-            $order_meta['krb_s_addr'] = $order->get_formatted_shipping_address();
-            $order_meta['krb_b_email'] = $order->billing_email;
-            $order_meta['krb_currency'] = $order->order_currency;
-            $order_meta['krb_settings'] = $krbwc_settings;
-            $order_meta['krb_store'] = plugins_url('', __FILE__);
+            $order_meta['nbr_order'] = $order;
+            $order_meta['nbr_items'] = $order->get_items();
+            $order_meta['nbr_b_addr'] = $order->get_formatted_billing_address();
+            $order_meta['nbr_s_addr'] = $order->get_formatted_shipping_address();
+            $order_meta['nbr_b_email'] = $order->billing_email;
+            $order_meta['nbr_currency'] = $order->order_currency;
+            $order_meta['nbr_settings'] = $nbr_settings;
+            $order_meta['nbr_store'] = plugins_url('', __FILE__);
 
 
             //-----------------------------------
-            // Save Karbo payment info together with the order.
+            // Save NiobioCash payment info together with the order.
             // Note: this code must be on top here, as other filters will be called from here and will use these values ...
             //
-            // Calculate realtime Karbo price (if exchange is necessary)
+            // Calculate realtime NiobioCash price (if exchange is necessary)
 
-            $exchange_rate = NBR__get_exchange_rate_per_Karbo(get_woocommerce_currency(), 'getfirst');
-            /// $exchange_rate = NBR__get_exchange_rate_per_Karbo (get_woocommerce_currency(), $this->exchange_rate_retrieval_method, $this->exchange_rate_type);
+            $exchange_rate = NBR__get_exchange_rate_per_NiobioCash(get_woocommerce_currency(), 'getfirst');
+            /// $exchange_rate = NBR__get_exchange_rate_per_NiobioCash (get_woocommerce_currency(), $this->exchange_rate_retrieval_method, $this->exchange_rate_type);
             if (!$exchange_rate) {
-                $msg = 'ERROR: Cannot determine Karbo exchange rate. Possible issues: store server does not allow outgoing connections, exchange rate servers are blocking incoming connections or down. ' .
-                       'You may avoid that by setting store currency directly to Karbo(KRB)';
+                $msg = 'ERROR: Cannot determine NiobioCash exchange rate. Possible issues: store server does not allow outgoing connections, exchange rate servers are blocking incoming connections or down. ' .
+                       'You may avoid that by setting store currency directly to NiobioCash(NBR)';
                 NBR__log_event(__FILE__, __LINE__, $msg);
                 exit('<h2 style="color:red;">' . $msg . '</h2>');
             }
 
-            $order_total_in_krb   = ($order->get_total() / $exchange_rate);
-            if (get_woocommerce_currency() != 'KRB') {
-                // @TODO Apply exchange rate multiplier only for stores with non-Karbo default currency.
-                $order_total_in_krb = $order_total_in_krb;
+            $order_total_in_nbr   = ($order->get_total() / $exchange_rate);
+            if (get_woocommerce_currency() != 'NBR') {
+                // @TODO Apply exchange rate multiplier only for stores with non-NiobioCash default currency.
+                $order_total_in_nbr = $order_total_in_nbr;
             }
 
-            $order_total_in_krb   = sprintf("%.2f", $order_total_in_krb); // round price to 2 Decimal Places
+            $order_total_in_nbr   = sprintf("%.2f", $order_total_in_nbr); // round price to 2 Decimal Places
 
-            $Karbos_address = false;
+            $NiobioCashs_address = false;
 
             $order_info =
             array(
                 'order_meta'							=> $order_meta,
                 'order_id'								=> $order_id,
-                'order_total'			    	 	=> $order_total_in_krb,  // Order total in KRB
+                'order_total'			    	 	=> $order_total_in_nbr,  // Order total in NBR
                 'order_datetime'  				=> date('Y-m-d H:i:s T'),
                 'requested_by_ip'					=> @$_SERVER['REMOTE_ADDR'],
                 'requested_by_ua'					=> @$_SERVER['HTTP_USER_AGENT'],
@@ -397,36 +397,36 @@ function NBR__plugins_loaded__load_Karbo_gateway()
 
             $wallet_api = new ForkNoteWalletd("http://127.0.0.1:18888");
 
-            $karbo_payment_id = NBR__generate_new_Karbo_payment_id($krbwc_settings, $order_info);
+            $nbr_payment_id = NBR__generate_new_NiobioCash_payment_id($nbr_settings, $order_info);
 
-            $karbo_address = $krbwc_settings['address'];
+            $nbr_address = $nbr_settings['address'];
 
 
-            NBR__log_event(__FILE__, __LINE__, "     Generated unique Karbo Payment ID: '{$karbo_payment_id}' Address: '{$karbo_address}' for order_id " . $order_id);
+            NBR__log_event(__FILE__, __LINE__, "     Generated unique NiobioCash Payment ID: '{$nbr_payment_id}' Address: '{$nbr_address}' for order_id " . $order_id);
 
             update_post_meta(
              $order_id, 			// post id ($order_id)
-             'order_total_in_krb', 	// meta key
-             $order_total_in_krb 	// meta value. If array - will be auto-serialized
+             'order_total_in_nbr', 	// meta key
+             $order_total_in_nbr 	// meta value. If array - will be auto-serialized
              );
             update_post_meta(
              $order_id, 			// post id ($order_id)
-             'Karbos_payment_id',	// meta key
-             $karbo_payment_id 	// meta value. If array - will be auto-serialized
+             'NiobioCashs_payment_id',	// meta key
+             $nbr_payment_id 	// meta value. If array - will be auto-serialized
              );
             update_post_meta(
              $order_id, 			// post id ($order_id)
-             'Karbos_address',	// meta key
-             $karbo_address 	// meta value. If array - will be auto-serialized
+             'NiobioCashs_address',	// meta key
+             $nbr_address 	// meta value. If array - will be auto-serialized
              );
             update_post_meta(
              $order_id, 			// post id ($order_id)
-             'Karbos_paid_total',	// meta key
+             'NiobioCashs_paid_total',	// meta key
              "0" 	// meta value. If array - will be auto-serialized
              );
             update_post_meta(
              $order_id, 			// post id ($order_id)
-             'Karbos_refunded',	// meta key
+             'NiobioCashs_refunded',	// meta key
              "0" 	// meta value. If array - will be auto-serialized
              );
             update_post_meta(
@@ -442,8 +442,8 @@ function NBR__plugins_loaded__load_Karbo_gateway()
             //-----------------------------------
 
 
-            // The Karbo gateway does not take payment immediately, but it does need to change the orders status to on-hold
-            // (so the store owner knows that Karbo payment is pending).
+            // The NiobioCash gateway does not take payment immediately, but it does need to change the orders status to on-hold
+            // (so the store owner knows that NiobioCash payment is pending).
             // We also need to tell WooCommerce that it needs to redirect to the thankyou page – this is done with the returned array
             // and the result being a success.
             //
@@ -451,18 +451,18 @@ function NBR__plugins_loaded__load_Karbo_gateway()
 
             //	Updating the order status:
 
-            // Mark as on-hold (we're awaiting for Karbos payment to arrive)
-            $order->update_status('on-hold', __('Awaiting Karbo payment to arrive', 'woocommerce'));
+            // Mark as on-hold (we're awaiting for NiobioCashs payment to arrive)
+            $order->update_status('on-hold', __('Awaiting NiobioCash payment to arrive', 'woocommerce'));
 
             /*
                         ///////////////////////////////////////
                         // timbowhite's suggestion:
                         // -----------------------
-                        // Mark as pending (we're awaiting for Karbos payment to arrive), not 'on-hold' since
+                        // Mark as pending (we're awaiting for NiobioCashs payment to arrive), not 'on-hold' since
                         // woocommerce does not automatically cancel expired on-hold orders. Woocommerce handles holding the stock
                         // for pending orders until order payment is complete.
-                        $order->update_status('pending', __('Awaiting Karbo payment to arrive', 'woocommerce'));
-            
+                        $order->update_status('pending', __('Awaiting NiobioCash payment to arrive', 'woocommerce'));
+
                         // Me: 'pending' does not trigger "Thank you" page and neither email sending. Not sure why.
                         //			Also - I think cancellation of unpaid orders needs to be initiated from cron job, as only we know when order needs to be cancelled,
                         //			by scanning "on-hold" orders through 'assigned_address_expires_in_mins' timeout check.
@@ -505,15 +505,15 @@ function NBR__plugins_loaded__load_Karbo_gateway()
             $order = new WC_Order($order_id);
 
             // Assemble detailed instructions.
-            $order_total_in_krb = get_post_meta($order->id, 'order_total_in_krb', true); // set single to true to receive properly unserialized array
-            $Karbos_payment_id = get_post_meta($order->id, 'Karbos_payment_id', true); // set single to true to receive properly unserialized array
-            $Karbos_address = get_post_meta($order->id, 'Karbos_address', true); // set single to true to receive properly unserialized array
+            $order_total_in_nbr = get_post_meta($order->id, 'order_total_in_nbr', true); // set single to true to receive properly unserialized array
+            $NiobioCashs_payment_id = get_post_meta($order->id, 'NiobioCashs_payment_id', true); // set single to true to receive properly unserialized array
+            $NiobioCashs_address = get_post_meta($order->id, 'NiobioCashs_address', true); // set single to true to receive properly unserialized array
 
 
             $instructions = $this->instructions;
-            $instructions = str_replace('{{{KRBCOINS_AMOUNT}}}', $order_total_in_krb, $instructions);
-            $instructions = str_replace('{{{KRBCOINS_PAYMENTID}}}', $Karbos_payment_id, $instructions);
-            $instructions = str_replace('{{{KRBCOINS_ADDRESS}}}', $Karbos_address, $instructions);
+            $instructions = str_replace('{{{NBRCOINS_AMOUNT}}}', $order_total_in_nbr, $instructions);
+            $instructions = str_replace('{{{NBRCOINS_PAYMENTID}}}', $NiobioCashs_payment_id, $instructions);
+            $instructions = str_replace('{{{NBRCOINS_ADDRESS}}}', $NiobioCashs_address, $instructions);
             $instructions =
                 str_replace(
                     '{{{EXTRA_INSTRUCTIONS}}}',
@@ -521,7 +521,7 @@ function NBR__plugins_loaded__load_Karbo_gateway()
                     $this->instructions_multi_payment_str,
                     $instructions
                     );
-            $order->add_order_note(__("Order instructions: price: {$order_total_in_krb} KRB, incoming account: {$Karbos_address} payment id: {$Karbos_payment_id}", 'woocommerce'));
+            $order->add_order_note(__("Order instructions: price: {$order_total_in_nbr} NBR, incoming account: {$NiobioCashs_address} payment id: {$NiobioCashs_payment_id}", 'woocommerce'));
 
             echo wpautop(wptexturize($instructions));
         }
@@ -544,20 +544,20 @@ function NBR__plugins_loaded__load_Karbo_gateway()
             if (!in_array($order->status, array('pending', 'on-hold'), true)) {
                 return;
             }
-            if ($order->payment_method !== 'Karbo') {
+            if ($order->payment_method !== 'NiobioCash') {
                 return;
             }
 
             // Assemble payment instructions for email
-            $order_total_in_krb = get_post_meta($order->id, 'order_total_in_krb', true); // set single to true to receive properly unserialized array
-            $Karbos_payment_id = get_post_meta($order->id, 'Karbos_payment_id', true); // set single to true to receive properly unserialized array
-            $Karbos_address = get_post_meta($order->id, 'Karbos_address', true); // set single to true to receive properly unserialized array
+            $order_total_in_nbr = get_post_meta($order->id, 'order_total_in_nbr', true); // set single to true to receive properly unserialized array
+            $NiobioCashs_payment_id = get_post_meta($order->id, 'NiobioCashs_payment_id', true); // set single to true to receive properly unserialized array
+            $NiobioCashs_address = get_post_meta($order->id, 'NiobioCashs_address', true); // set single to true to receive properly unserialized array
 
 
             $instructions = $this->instructions;
-            $instructions = str_replace('{{{KRBCOINS_AMOUNT}}}', $order_total_in_krb, $instructions);
-            $instructions = str_replace('{{{KRBCOINS_PAYMENTID}}}', $Karbos_payment_id, $instructions);
-            $instructions = str_replace('{{{KRBCOINS_ADDRESS}}}', $Karbos_address, $instructions);
+            $instructions = str_replace('{{{NBRCOINS_AMOUNT}}}', $order_total_in_nbr, $instructions);
+            $instructions = str_replace('{{{NBRCOINS_PAYMENTID}}}', $NiobioCashs_payment_id, $instructions);
+            $instructions = str_replace('{{{NBRCOINS_ADDRESS}}}', $NiobioCashs_address, $instructions);
             $instructions =
                 str_replace(
                     '{{{EXTRA_INSTRUCTIONS}}}',
@@ -575,14 +575,14 @@ function NBR__plugins_loaded__load_Karbo_gateway()
 
     //-----------------------------------------------------------------------
     // Hook into WooCommerce - add necessary hooks and filters
-    add_filter('woocommerce_payment_gateways', 'NBR__add_Karbo_gateway');
+    add_filter('woocommerce_payment_gateways', 'NBR__add_NiobioCash_gateway');
 
     // Disable unnecessary billing fields.
     /// Note: it affects whole store.
     /// add_filter ('woocommerce_checkout_fields' , 	'NBR__woocommerce_checkout_fields' );
 
-    add_filter('woocommerce_currencies', 'NBR__add_krb_currency');
-    add_filter('woocommerce_currency_symbol', 'NBR__add_krb_currency_symbol', 10, 2);
+    add_filter('woocommerce_currencies', 'NBR__add_nbr_currency');
+    add_filter('woocommerce_currency_symbol', 'NBR__add_nbr_currency_symbol', 10, 2);
 
     // Change [Order] button text on checkout screen.
     /// Note: this will affect all payment methods.
@@ -598,9 +598,9 @@ function NBR__plugins_loaded__load_Karbo_gateway()
      * @package
      * @return array
      */
-    function NBR__add_Karbo_gateway($methods)
+    function NBR__add_NiobioCash_gateway($methods)
     {
-        $methods[] = 'NBR_Karbo';
+        $methods[] = 'NBR_NiobioCash';
         return $methods;
     }
     //=======================================================================
@@ -625,19 +625,19 @@ function NBR__plugins_loaded__load_Karbo_gateway()
     //=======================================================================
 
     //=======================================================================
-    function NBR__add_krb_currency($currencies)
+    function NBR__add_nbr_currency($currencies)
     {
-        $currencies['KRB'] = __('Karbo', 'woocommerce');
+        $currencies['NBR'] = __('NiobioCash', 'woocommerce');
         return $currencies;
     }
     //=======================================================================
 
     //=======================================================================
-    function NBR__add_krb_currency_symbol($currency_symbol, $currency)
+    function NBR__add_nbr_currency_symbol($currency_symbol, $currency)
     {
         switch ($currency) {
-            case 'KRB':
-                $currency_symbol = '$KRB'; // ฿
+            case 'NBR':
+                $currency_symbol = 'NBR'; // ฿
                 break;
         }
 
@@ -655,10 +655,10 @@ function NBR__plugins_loaded__load_Karbo_gateway()
 //###########################################################################
 
 //===========================================================================
-function NBR__process_payment_completed_for_order($order_id, $Karbos_paid=false)
+function NBR__process_payment_completed_for_order($order_id, $NiobioCashs_paid=false)
 {
-    if ($Karbos_paid) {
-        update_post_meta($order_id, 'Karbos_paid_total', $Karbos_paid);
+    if ($NiobioCashs_paid) {
+        update_post_meta($order_id, 'NiobioCashs_paid_total', $NiobioCashs_paid);
     }
 
     // Payment completed
@@ -674,10 +674,10 @@ function NBR__process_payment_completed_for_order($order_id, $Karbos_paid=false)
 
         $order->payment_complete();
 
-        $krbwc_settings = NBR__get_settings();
-        if ($krbwc_settings['autocomplete_paid_orders']) {
+        $nbr_settings = NBR__get_settings();
+        if ($nbr_settings['autocomplete_paid_orders']) {
             // Ensure order is completed.
-            $order->update_status('completed', __('Order marked as completed according to Karbo plugin settings', 'woocommerce'));
+            $order->update_status('completed', __('Order marked as completed according to NiobioCash plugin settings', 'woocommerce'));
         }
 
         // Notify admin about payment processed
@@ -691,7 +691,7 @@ function NBR__process_payment_completed_for_order($order_id, $Karbos_paid=false)
                 $email,
                 $email,
                 "Full payment received for order ID: '{$order_id}'",
-                "Order ID: '{$order_id}' paid in full. <br />Received KRB: '$Karbos_paid'.<br />Please process and complete order for customer."
+                "Order ID: '{$order_id}' paid in full. <br />Received NBR: '$NiobioCashs_paid'.<br />Please process and complete order for customer."
                 );
         }
     }
