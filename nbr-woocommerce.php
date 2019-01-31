@@ -55,7 +55,7 @@ function NBR_activate()
     //----------------------------------
     // Setup cron jobs
 
-    if ($knbr_settings['enable_soft_cron_job'] && !wp_next_scheduled('NBR_cron_action')) {
+    if ($nbr_settings['enable_soft_cron_job'] && !wp_next_scheduled('NBR_cron_action')) {
         $cron_job_schedule_name = $nbr_settings['soft_cron_job_schedule_name'];
         wp_schedule_event(time(), $cron_job_schedule_name, 'NBR_cron_action');
     }
