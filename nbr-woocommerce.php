@@ -3,7 +3,7 @@
 Plugin Name: NBR for WooCommerce
 Plugin URI: https://github.com/niobio-cash/gateway-woocommerce
 Description: Niobio Cash for WooCommerce plugin allows you to accept payments in NBR for physical and digital products at your WooCommerce-powered online store.
-Version: 1.9
+Version: 1.0
 Author: vinyvicente
 Author URI: https://github.com/niobio-cash/gateway-woocommerce
 License: GPL 2.0

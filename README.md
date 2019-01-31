@@ -11,8 +11,8 @@ Once you have installed and activated WooCommerce, you may install and activate 
 
 * Fully automatic operation.
 * Can be used with view only wallet so only the view private key is on the server and none of the spend private keys are required to be kept anywhere on your online store server.
-* Accept payments in Karbos directly into your Niobio Cash wallet.
-* Karbo wallet payment option completely removes dependency on any third party service and middlemen.
+* Accept payments in Niobio Cash directly into your Niobio Cash wallet.
+* Niobio Cash wallet payment option completely removes dependency on any third party service and middlemen.
 * Accept payment in Niobio CAsh for physical and digital downloadable products.
 * Add Niobio Cash option to your existing online store with alternative main currency.
 * Flexible exchange rate calculations fully managed via administrative settings.
