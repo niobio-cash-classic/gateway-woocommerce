@@ -5,7 +5,7 @@ https://github.com/Karbovanets/karbo-woocommerce/
 */
 
 // Include everything
-include(dirname(__FILE__) . '/krbwc-include-all.php');
+include(dirname(__FILE__) . '/nbr-include-all.php');
 
 //===========================================================================
 function NBR__render_general_settings_page()
@@ -26,7 +26,7 @@ function NBR__render_settings_page($menu_page_name)
 ' . $result . '
 </div>
 ';
-    } elseif (isset($_POST['button_update_krbwc_settings'])) {
+    } elseif (isset($_POST['button_update_nbr_settings'])) {
         NBR__update_settings("", false);
         echo <<<HHHH
 <div align="center" style="background-color:#FFFFE0;padding:5px;font-size:120%;border: 1px solid #E6DB55;margin:5px;border-radius:3px;">
@@ -55,11 +55,11 @@ HHHH;
     if (!$gateway_valid_for_use) {
         $gateway_status_message =
     '<p style="border:1px solid #DDD;padding:5px 10px;font-weight:bold;color:#EE0000;background-color:#FFFFAA;">' .
-    "Karbo Payment Gateway is NOT operational (try to re-enter and save settings): " . $gateway_status_message .
+    "Niobio Cash Payment Gateway is NOT operational (try to re-enter and save settings): " . $gateway_status_message .
     '</p>';
     } else {
-        $krbwc_settings = NBR__get_settings();
-        $address = $krbwc_settings['address'];
+        $nbr_settings = NBR__get_settings();
+        $address = $nbr_settings['address'];
 
         try {
             $wallet_api = new ForkNoteWalletd("http://127.0.0.1:18888");
@@ -68,7 +68,7 @@ HHHH;
         }
 
         if ($address_balance === false) {
-            $address_balance = __("Karbo address is not found in wallet.", 'woocommerce');
+            $address_balance = __("Niobio Cash address is not found in wallet.", 'woocommerce');
         } else {
             $address_pending_balance = $address_balance['lockedAmount'];
             $address_pending_balance = sprintf("%.12f", $address_pending_balance  / 1000000000000.0);
@@ -96,7 +96,7 @@ HHHH;
     if (function_exists('get_woocommerce_currency')) {
         $currency_code = @get_woocommerce_currency();
     }
-    if (!$currency_code || $currency_code=='KRB') {
+    if (!$currency_code || $currency_code=='NBR') {
         $currency_code = 'USD';
     }
 
@@ -125,13 +125,13 @@ HHHH;
 //===========================================================================
 function NBR__render_general_settings_page_html()
 {
-    $krbwc_settings = NBR__get_settings();
+    $nbr_settings = NBR__get_settings();
     global $g_NBR__cron_script_url; ?>
 
     <form method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
       <p class="submit">
-        <input type="submit" class="button-primary"    name="button_update_krbwc_settings"        value="<?php _e('Save Changes') ?>"             />
-        <input type="submit" class="button-secondary"  style="color:red;" name="button_reset_partial_krbwc_settings" value="<?php _e('Reset settings') ?>" onClick="return confirm('Are you sure you want to reset settings on this page?');" />
+        <input type="submit" class="button-primary"    name="button_update_nbr_settings"        value="<?php _e('Save Changes') ?>"             />
+        <input type="submit" class="button-secondary"  style="color:red;" name="button_reset_partial_nbr_settings" value="<?php _e('Reset settings') ?>" onClick="return confirm('Are you sure you want to reset settings on this page?');" />
       </p>
       <table class="form-table">
 
@@ -147,15 +147,15 @@ function NBR__render_general_settings_page_html()
         </tr>
 
         <tr valign="top">
-          <th scope="row">Karbo Service Provider:</th>
+          <th scope="row">Niobio Cash Service Provider:</th>
           <td>
             <select name="service_provider" class="select ">
-              <option <?php if ($krbwc_settings['service_provider'] == 'local_wallet') {
+              <option <?php if ($nbr_settings['service_provider'] == 'local_wallet') {
         echo 'selected="selected"';
     } ?> value="local_wallet">Local wallet (walletd)</option>
             </select>
             <p class="description">
-              Please select your Karbo service provider and press [Save changes]. Then fill-in necessary details and press [Save changes] again.
+              Please select your Niobio Cash service provider and press [Save changes]. Then fill-in necessary details and press [Save changes] again.
               <br />Recommended setting: <b>Local wallet</b>.
             </p>
           </td>
@@ -164,7 +164,7 @@ function NBR__render_general_settings_page_html()
         <tr valign="top">
           <th scope="row">Wallet Address:</th>
           <td>
-            <textarea style="width:75%;" name="address"><?php echo $krbwc_settings['address']; ?></textarea>
+            <textarea style="width:75%;" name="address"><?php echo $nbr_settings['address']; ?></textarea>
             <p class="description">
               Set up your local wallet with the instructions for <a href="http://forknote.net/documentation/rpc-wallet/">the ForkNote RPC Wallet</a> or <a href="https://wiki.bytecoin.org/wiki/Bytecoin_RPC_Wallet">Reference(Bytecoin) RPC Wallet</a>. Then copy in one of your wallet addresses.
             </p>
@@ -174,10 +174,10 @@ function NBR__render_general_settings_page_html()
         <tr valign="top">
           <th scope="row">Number of confirmations required before accepting payment:</th>
           <td>
-            <input type="text" name="confs_num" value="<?php echo $krbwc_settings['confs_num']; ?>" size="4" />
+            <input type="text" name="confs_num" value="<?php echo $nbr_settings['confs_num']; ?>" size="4" />
             <p class="description">
-              After a transaction is broadcast to the Karbo network, it may be included in a block that is published
-              to the network. When that happens it is said that one <a href="https://en.Karbo.it/wiki/Confirmation"><b>confirmation</b></a> has occurred for the transaction.
+              After a transaction is broadcast to the Niobio Cash network, it may be included in a block that is published
+              to the network. When that happens it is said that one confirmation has occurred for the transaction.
               With each subsequent block that is found, the number of confirmations is increased by one. To protect against double spending, a transaction should not be considered as confirmed until a certain number of blocks confirm, or verify that transaction.
               6 is considered very safe number of confirmations, although it takes longer to confirm.
             </p>
@@ -187,7 +187,7 @@ function NBR__render_general_settings_page_html()
         <tr valign="top">
           <th scope="row">Payment expiration time (minutes):</th>
           <td>
-            <input type="text" name="assigned_address_expires_in_mins" value="<?php echo $krbwc_settings['assigned_address_expires_in_mins']; ?>" size="4" />
+            <input type="text" name="assigned_address_expires_in_mins" value="<?php echo $nbr_settings['assigned_address_expires_in_mins']; ?>" size="4" />
             <p class="description">
               Payment must recieve the required number of confirmations within this time. This is so that the exchange rate is current.
             </p>
@@ -197,12 +197,12 @@ function NBR__render_general_settings_page_html()
         <tr valign="top">
           <th scope="row">Exchange rate multiplier:</th>
           <td>
-            <input type="text" name="exchange_multiplier" value="<?php echo $krbwc_settings['exchange_multiplier']; ?>" size="4" />
+            <input type="text" name="exchange_multiplier" value="<?php echo $nbr_settings['exchange_multiplier']; ?>" size="4" />
             <p class="description">
-              Extra multiplier to apply to convert store default currency to Karbo price.
-              <br />Example: 1.05 - will add extra 5% to the total price in Karbos.
+              Extra multiplier to apply to convert store default currency to Niobio Cash price.
+              <br />Example: 1.05 - will add extra 5% to the total price in Niobio Cash.
               May be useful to compensate for market volatility or for merchant's loss to fees when converting Karbos to local currency,
-              or to encourage customer to use Karbos for purchases (by setting multiplier to < 1.00 values).
+              or to encourage customer to use Niobio Cash for purchases (by setting multiplier to < 1.00 values).
             </p>
           </td>
         </tr>
@@ -210,7 +210,7 @@ function NBR__render_general_settings_page_html()
         <tr valign="top">
           <th scope="row">Auto-complete paid orders:</th>
           <td>
-            <input type="hidden" name="autocomplete_paid_orders" value="0" /><input type="checkbox" name="autocomplete_paid_orders" value="1" <?php if ($krbwc_settings['autocomplete_paid_orders']) {
+            <input type="hidden" name="autocomplete_paid_orders" value="0" /><input type="checkbox" name="autocomplete_paid_orders" value="1" <?php if ($nbr_settings['autocomplete_paid_orders']) {
         echo 'checked="checked"';
     } ?> />
             <p class="description">If checked - fully paid order will be marked as 'completed' and '<i>Your order is complete</i>' email will be immediately delivered to customer.
@@ -224,15 +224,15 @@ function NBR__render_general_settings_page_html()
             <th scope="row">Cron job type:</th>
             <td>
               <select name="enable_soft_cron_job" class="select ">
-                <option <?php if ($krbwc_settings['enable_soft_cron_job'] == '1') {
+                <option <?php if ($nbr_settings['enable_soft_cron_job'] == '1') {
         echo 'selected="selected"';
     } ?> value="1">Soft Cron (Wordpress-driven)</option>
-                <option <?php if ($krbwc_settings['enable_soft_cron_job'] != '1') {
+                <option <?php if ($nbr_settings['enable_soft_cron_job'] != '1') {
         echo 'selected="selected"';
     } ?> value="0">Hard Cron (Cpanel-driven)</option>
               </select>
               <p class="description">
-                <?php if ($krbwc_settings['enable_soft_cron_job'] != '1') {
+                <?php if ($nbr_settings['enable_soft_cron_job'] != '1') {
         echo '<p style="background-color:#FFC;color:#2A2;"><b>NOTE</b>: Hard Cron job is enabled: make sure to follow instructions below to enable hard cron job at your hosting panel.</p>';
     } ?>
                 Cron job will take care of all regular Karbo payment processing tasks, like checking if payments are made and automatically completing the orders.<br />
