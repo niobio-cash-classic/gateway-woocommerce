@@ -351,7 +351,7 @@ function NBR__plugins_loaded__load_Niobio_Cash_gateway()
             $order_meta['nbr_b_addr'] = $order->get_formatted_billing_address();
             $order_meta['nbr_s_addr'] = $order->get_formatted_shipping_address();
             $order_meta['nbr_b_email'] = $order->billing_email;
-            $order_meta['knbr_currency'] = $order->order_currency;
+            $order_meta['nbr_currency'] = $order->order_currency;
             $order_meta['nbr_settings'] = $nbr_settings;
             $order_meta['nbr_store'] = plugins_url('', __FILE__);
 
