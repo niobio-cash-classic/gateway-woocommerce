@@ -34,7 +34,7 @@ function NBR_activate()
 {
     global  $g_NBR__config_defaults;
 
-    $krbwc_default_options = $g_NBR__config_defaults;
+    $nbr_default_options = $g_NBR__config_defaults;
 
     // This will overwrite default options with already existing options but leave new options (in case of upgrading to new version) untouched.
     $nbr_settings = NBR__get_settings();
