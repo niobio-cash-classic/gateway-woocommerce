@@ -3,7 +3,7 @@
 Plugin Name: NBR for WooCommerce
 Plugin URI: https://github.com/niobio-cash/gateway-woocommerce
 Description: Niobio Cash for WooCommerce plugin allows you to accept payments in NBR for physical and digital products at your WooCommerce-powered online store.
-Version: 1.1
+Version: 1.0
 Author: vinyvicente
 Author URI: https://github.com/niobio-cash/gateway-woocommerce
 License: GPL 2.0
@@ -40,7 +40,7 @@ function NBR_activate()
     $nbr_settings = NBR__get_settings();
 
     foreach ($nbr_settings as $key=>$value) {
-        $krbwc_default_options[$key] = $value;
+        $nbr_default_options[$key] = $value;
     }
 
     update_option(NBR_SETTINGS_NAME, $nbr_default_options);
