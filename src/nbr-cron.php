@@ -91,7 +91,7 @@ function NBR_cron_job_worker($hardcron=false)
                 // Refresh 'received_funds_checked_at' field
                 $current_time = time();
                 $query =
-                    "UPDATE `$krb_payments_table_name`
+                    "UPDATE `$nbr_payments_table_name`
              SET
                 `total_received_funds` = '{$balance_info_array['balance']}',
                 `received_funds_checked_at`='$current_time'
@@ -102,7 +102,7 @@ function NBR_cron_job_worker($hardcron=false)
                     NBR__log_event(__FILE__, __LINE__, "Cron job: NOTE: Detected non-zero balance at address: '{$row_for_balance_check['nbr_address']}, Payment ID = {$row_for_balance_check['nbrpayment_id']}, order ID = '{$last_order_info['order_id']}'. Detected balance ='{$balance_info_array['balance']}'.");
 
                     if ($balance_info_array['balance'] < $last_order_info['order_total']) {
-                        NBR__log_event(__FILE__, __LINE__, "Cron job: NOTE: balance at address: '{$row_for_balance_check['nbr_address']}, Payment ID = {$row_for_balance_check['krb_payment_id']}' (NBR '{$balance_info_array['balance']}') is not yet sufficient to complete it's order (order ID = '{$last_order_info['order_id']}'). Total required: '{$last_order_info['order_total']}'. Will wait for more funds to arrive...");
+                        NBR__log_event(__FILE__, __LINE__, "Cron job: NOTE: balance at address: '{$row_for_balance_check['nbr_address']}, Payment ID = {$row_for_balance_check['nbr_payment_id']}' (NBR '{$balance_info_array['balance']}') is not yet sufficient to complete it's order (order ID = '{$last_order_info['order_id']}'). Total required: '{$last_order_info['order_total']}'. Will wait for more funds to arrive...");
                     }
                 }
 
@@ -130,7 +130,7 @@ function NBR_cron_job_worker($hardcron=false)
                     */
 
                     // Last order was fully paid! Complete it...
-                    NBR__log_event(__FILE__, __LINE__, "Cron job: NOTE: Full payment for order ID '{$last_order_info['order_id']}' detected at address: '{$row_for_balance_check['nbr_address']}, Payment ID = {$row_for_balance_check['krb_payment_id']}' (KRB '{$balance_info_array['balance']}'). Total was required for this order: '{$last_order_info['order_total']}'. Processing order ...");
+                    NBR__log_event(__FILE__, __LINE__, "Cron job: NOTE: Full payment for order ID '{$last_order_info['order_id']}' detected at address: '{$row_for_balance_check['nbr_address']}, Payment ID = {$row_for_balance_check['nbr_payment_id']}' (NBR '{$balance_info_array['balance']}'). Total was required for this order: '{$last_order_info['order_total']}'. Processing order ...");
 
                     // Update order' meta info
                     $address_meta['orders'][0]['paid'] = true;
