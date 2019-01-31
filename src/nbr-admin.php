@@ -1,7 +1,7 @@
 <?php
 /*
-Karbo for WooCommerce
-https://github.com/Karbovanets/karbo-woocommerce/
+NiobioCash for WooCommerce
+https://github.com/niobio-cash/gateway-woocommerce
 */
 
 // Include everything
@@ -77,7 +77,7 @@ function NBR__withdraw()
     }
 
     if ($address_balance === false) {
-        return "Niobio Cash address is not found in wallet.";
+        return "NiobioCash address is not found in wallet.";
     } else {
         $address_balance = $address_balance['availableBalance'];
         //round ( float $val [, int $precision = 0 [, int $mode = PHP_ROUND_HALF_UP ]] )
@@ -125,7 +125,7 @@ function NBR__update_settings($nbr_use_these_settings = false, $also_update_pers
 {
     if ($nbr_use_these_settings) {
         // if ($also_update_persistent_settings)
-        //   NBR__update_persistent_settings ($krbwc_use_these_settings);
+        //   NBR__update_persistent_settings ($nbr_use_these_settings);
 
         update_option(NBR_SETTINGS_NAME, $nbr_use_these_settings);
         return;
@@ -194,7 +194,7 @@ function NBR__reset_partial_settings($also_reset_persistent_settings = false)
     update_option(NBR_SETTINGS_NAME, $nbr_settings);
 
     // if ($also_reset_persistent_settings)
-    //   NBR__update_persistent_settings ($krbwc_settings);
+    //   NBR__update_persistent_settings ($nbr_settings);
 }
 
 //===========================================================================
@@ -261,7 +261,7 @@ function NBR__create_database_tables($nbr_settings)
 
     //----------------------------------------------------------
     // Create tables
-    $query = "CREATE TABLE IF NOT EXISTS `nbr_payments_table_name` (
+    $query = "CREATE TABLE IF NOT EXISTS `$nbr_payments_table_name` (
     `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
     `nbr_address` char(98) NOT NULL,
     `nbr_payment_id` char(64) NOT NULL,

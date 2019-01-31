@@ -1,7 +1,7 @@
 <?php
 /*
-Karbo for WooCommerce
-https://github.com/Karbovanets/karbo-woocommerce/
+NiobioCash for WooCommerce
+https://github.com/niobio-cash/gateway-woocommerce
 */
 
 
@@ -99,7 +99,7 @@ function NBR_cron_job_worker($hardcron=false)
                 $ret_code = $wpdb->query($query);
 
                 if ($balance_info_array['balance'] > 0) {
-                    NBR__log_event(__FILE__, __LINE__, "Cron job: NOTE: Detected non-zero balance at address: '{$row_for_balance_check['nbr_address']}, Payment ID = {$row_for_balance_check['nbrpayment_id']}, order ID = '{$last_order_info['order_id']}'. Detected balance ='{$balance_info_array['balance']}'.");
+                    NBR__log_event(__FILE__, __LINE__, "Cron job: NOTE: Detected non-zero balance at address: '{$row_for_balance_check['nbr_address']}, Payment ID = {$row_for_balance_check['nbr_payment_id']}, order ID = '{$last_order_info['order_id']}'. Detected balance ='{$balance_info_array['balance']}'.");
 
                     if ($balance_info_array['balance'] < $last_order_info['order_total']) {
                         NBR__log_event(__FILE__, __LINE__, "Cron job: NOTE: balance at address: '{$row_for_balance_check['nbr_address']}, Payment ID = {$row_for_balance_check['nbr_payment_id']}' (NBR '{$balance_info_array['balance']}') is not yet sufficient to complete it's order (order ID = '{$last_order_info['order_id']}'). Total required: '{$last_order_info['order_total']}'. Will wait for more funds to arrive...");
@@ -117,7 +117,7 @@ function NBR_cron_job_worker($hardcron=false)
                                 // All orders placed on this address in reverse chronological order
                                 array (
                                    'order_id'     => $order_id,
-                                   'order_total'  => $order_total_in_krb,
+                                   'order_total'  => $order_total_in_nbr,
                                    'order_datetime'  => date('Y-m-d H:i:s T'),
                                    'requested_by_ip' => @$_SERVER['REMOTE_ADDR'],
                                 ),

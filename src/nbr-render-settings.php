@@ -1,7 +1,7 @@
 <?php
 /*
-Karbo for WooCommerce
-https://github.com/Karbovanets/karbo-woocommerce/
+NiobioCash for WooCommerce
+https://github.com/niobio-cash/gateway-woocommerce
 */
 
 // Include everything
@@ -55,7 +55,7 @@ HHHH;
     if (!$gateway_valid_for_use) {
         $gateway_status_message =
     '<p style="border:1px solid #DDD;padding:5px 10px;font-weight:bold;color:#EE0000;background-color:#FFFFAA;">' .
-    "Niobio Cash Payment Gateway is NOT operational (try to re-enter and save settings): " . $gateway_status_message .
+    "NiobioCash Payment Gateway is NOT operational (try to re-enter and save settings): " . $gateway_status_message .
     '</p>';
     } else {
         $nbr_settings = NBR__get_settings();
@@ -68,7 +68,7 @@ HHHH;
         }
 
         if ($address_balance === false) {
-            $address_balance = __("Niobio Cash address is not found in wallet.", 'woocommerce');
+            $address_balance = __("NiobioCash address is not found in wallet.", 'woocommerce');
         } else {
             $address_pending_balance = $address_balance['lockedAmount'];
             $address_pending_balance = sprintf("%.12f", $address_pending_balance  / 1000000000000.0);
@@ -82,7 +82,7 @@ HHHH;
         $gateway_status_message =
     '<form method="post" action="' . $_SERVER['REQUEST_URI'] . '">' .
     '<p style="border:1px solid #DDD;padding:5px 10px;font-weight:bold;color:#004400;background-color:#CCFFCC;">' .
-    "Karbo Payment Gateway is operational" .
+    "NiobioCash Payment Gateway is operational" .
     "<br>Pending Amount: " . $address_pending_balance .
     "<br>Available Balance: " . $display_address_balance .
     "<br>Send Balance (Minus Fee:" . $display_fee . ") To Address: " .
@@ -102,7 +102,7 @@ HHHH;
 
     $exchange_rate_message =
     '<p style="border:1px solid #DDD;padding:5px 10px;background-color:#cceeff;">' .
-    NBR__get_exchange_rate_per_Karbo($currency_code, 'getfirst', true) .
+    NBR__get_exchange_rate_per_NiobioCash($currency_code, 'getfirst', true) .
     '</p>';
 
     echo '<div class="wrap">';
@@ -147,7 +147,7 @@ function NBR__render_general_settings_page_html()
         </tr>
 
         <tr valign="top">
-          <th scope="row">Niobio Cash Service Provider:</th>
+          <th scope="row">NiobioCash Service Provider:</th>
           <td>
             <select name="service_provider" class="select ">
               <option <?php if ($nbr_settings['service_provider'] == 'local_wallet') {
@@ -155,7 +155,7 @@ function NBR__render_general_settings_page_html()
     } ?> value="local_wallet">Local wallet (walletd)</option>
             </select>
             <p class="description">
-              Please select your Niobio Cash service provider and press [Save changes]. Then fill-in necessary details and press [Save changes] again.
+              Please select your NiobioCash service provider and press [Save changes]. Then fill-in necessary details and press [Save changes] again.
               <br />Recommended setting: <b>Local wallet</b>.
             </p>
           </td>
@@ -176,8 +176,8 @@ function NBR__render_general_settings_page_html()
           <td>
             <input type="text" name="confs_num" value="<?php echo $nbr_settings['confs_num']; ?>" size="4" />
             <p class="description">
-              After a transaction is broadcast to the Niobio Cash network, it may be included in a block that is published
-              to the network. When that happens it is said that one confirmation has occurred for the transaction.
+              After a transaction is broadcast to the NiobioCash network, it may be included in a block that is published
+              to the network. When that happens it is said that one <a href="https://en.NiobioCash.it/wiki/Confirmation"><b>confirmation</b></a> has occurred for the transaction.
               With each subsequent block that is found, the number of confirmations is increased by one. To protect against double spending, a transaction should not be considered as confirmed until a certain number of blocks confirm, or verify that transaction.
               6 is considered very safe number of confirmations, although it takes longer to confirm.
             </p>
@@ -199,10 +199,10 @@ function NBR__render_general_settings_page_html()
           <td>
             <input type="text" name="exchange_multiplier" value="<?php echo $nbr_settings['exchange_multiplier']; ?>" size="4" />
             <p class="description">
-              Extra multiplier to apply to convert store default currency to Niobio Cash price.
-              <br />Example: 1.05 - will add extra 5% to the total price in Niobio Cash.
-              May be useful to compensate for market volatility or for merchant's loss to fees when converting Karbos to local currency,
-              or to encourage customer to use Niobio Cash for purchases (by setting multiplier to < 1.00 values).
+              Extra multiplier to apply to convert store default currency to NiobioCash price.
+              <br />Example: 1.05 - will add extra 5% to the total price in NiobioCashs.
+              May be useful to compensate for market volatility or for merchant's loss to fees when converting NiobioCashs to local currency,
+              or to encourage customer to use NiobioCashs for purchases (by setting multiplier to < 1.00 values).
             </p>
           </td>
         </tr>
@@ -235,16 +235,16 @@ function NBR__render_general_settings_page_html()
                 <?php if ($nbr_settings['enable_soft_cron_job'] != '1') {
         echo '<p style="background-color:#FFC;color:#2A2;"><b>NOTE</b>: Hard Cron job is enabled: make sure to follow instructions below to enable hard cron job at your hosting panel.</p>';
     } ?>
-                Cron job will take care of all regular Karbo payment processing tasks, like checking if payments are made and automatically completing the orders.<br />
+                Cron job will take care of all regular NiobioCash payment processing tasks, like checking if payments are made and automatically completing the orders.<br />
                 <b>Soft Cron</b>: - Wordpress-driven (runs on behalf of a random site visitor).
                 <br />
                 <b>Hard Cron</b>: - Cron job driven by the website hosting system/server (usually via CPanel). <br />
                 When enabling Hard Cron job - make this script to run every 5 minutes at your hosting panel cron job scheduler:<br />
                 <?php echo '<tt style="background-color:#FFA;color:#B00;padding:0px 6px;">wget -O /dev/null ' . $g_NBR__cron_script_url . '?hardcron=1</tt>'; ?>
-                <br /><b style="color:red;">NOTE:</b> Cron jobs <b>might not work</b> if your site is password protected with HTTP Basic auth or other methods. This will result in WooCommerce store not seeing received payments (even though funds will arrive correctly to your Karbo addresses).
+                <br /><b style="color:red;">NOTE:</b> Cron jobs <b>might not work</b> if your site is password protected with HTTP Basic auth or other methods. This will result in WooCommerce store not seeing received payments (even though funds will arrive correctly to your NiobioCash addresses).
                 <br /><u>Note:</u> You will need to deactivate/reactivate plugin after changing this setting for it to have effect.<br />
                 "Hard" cron jobs may not be properly supported by all hosting plans (many shared hosting plans has restrictions in place).
-                <br />For secure, fast hosting service optimized for wordpress and 100% compatibility with WooCommerce and Karbo we recommend <b><a href="http://hostrum.com/" target="_blank">Hostrum Hosting</a></b>.
+                <br />For secure, fast hosting service optimized for wordpress and 100% compatibility with WooCommerce and NiobioCash we recommend <b><a href="http://hostrum.com/" target="_blank">Hostrum Hosting</a></b>.
               </p>
             </td>
         </tr>

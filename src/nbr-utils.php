@@ -1,12 +1,12 @@
 <?php
 /*
-Karbo for WooCommerce
-https://github.com/Karbovanets/karbo-woocommerce/
+NiobioCash for WooCommerce
+https://github.com/niobio-cash/gateway-woocommerce
 */
 
 
 //===========================================================================
-function NBR__generate_new_Niobio_Cash_payment_id($nbr_settings=false, $order_info)
+function NBR__generate_new_NiobioCash_payment_id($nbr_settings=false, $order_info)
 {
     global $wpdb;
 
@@ -89,7 +89,7 @@ function NBR_serialize_address_meta($address_meta_arr)
 //===========================================================================
 /*
 $address_request_array = array (
-  'krb_payment_id'            => '1xxxxxxx',
+  'nbr_payment_id'            => '1xxxxxxx',
   'required_confirmations' => '6',
   'api_timeout'						 => 10,
   );
@@ -118,7 +118,7 @@ function NBR__getreceivedbyaddress_info($address_request_array, $nbr_settings=fa
     $fnw = new ForkNoteWalletd("http://127.0.0.1:18888");
     $status = $fnw->getStatus();
 
-    $t = $fnw->getTransactions($status["blockCount"] - 50000, false, 50000, $nbr_payment_id, [$nb_address]);
+    $t = $fnw->getTransactions($status["blockCount"] - 50000, false, 50000, $nbr_payment_id, [$nbr_address]);
     // print_r( $t );
 
     $total = 0;
@@ -165,7 +165,7 @@ function NBR__getreceivedbyaddress_info($address_request_array, $nbr_settings=fa
 
 //===========================================================================
 // Returns:
-//    success: number of currency units (dollars, etc...) would take to convert to 1 Karbo, ex: "15.32476".
+//    success: number of currency units (dollars, etc...) would take to convert to 1 NiobioCash, ex: "15.32476".
 //    failure: false
 //
 // $currency_code, one of: USD, AUD, CAD, CHF, CNY, DKK, EUR, GBP, HKD, JPY, NZD, PLN, RUB, SEK, SGD, THB
@@ -175,9 +175,9 @@ function NBR__getreceivedbyaddress_info($address_request_array, $nbr_settings=fa
 //
 // $get_ticker_string - true - HTML formatted text message instead of pure number returned.
 
-function NBR__get_exchange_rate_per_Niobio_Cash($currency_code, $rate_retrieval_method = 'getfirst', $get_ticker_string=false)
+function NBR__get_exchange_rate_per_NiobioCash($currency_code, $rate_retrieval_method = 'getfirst', $get_ticker_string=false)
 {
-    if ($currency_code == 'NB') {
+    if ($currency_code == 'NBR') {
         return "1.00";
     }   // 1:1
 
@@ -191,7 +191,7 @@ function NBR__get_exchange_rate_per_Niobio_Cash($currency_code, $rate_retrieval_
     $current_time  = time();
     $cache_hit     = false;
     $requested_cache_method_type = $rate_retrieval_method . '|' . $exchange_rate_type;
-    $ticker_string = "<span style='color:#222;'>According to your settings (including multiplier), current calculated rate for 1 Karbo (in {$currency_code})={{{EXCHANGE_RATE}}}</span>";
+    $ticker_string = "<span style='color:#222;'>According to your settings (including multiplier), current calculated rate for 1 NiobioCash (in {$currency_code})={{{EXCHANGE_RATE}}}</span>";
     $ticker_string_error = "<span style='color:red;background-color:#FFA'>WARNING: Cannot determine exchange rates (for '$currency_code')! {{{ERROR_MESSAGE}}} Make sure your PHP settings are configured properly and your server can (is allowed to) connect to external WEB services via PHP.</wspan>";
 
 
@@ -247,7 +247,7 @@ function NBR__function_not_exists($fname)
 function NBR__update_exchange_rate_cache($currency_code, $requested_cache_method_type, $exchange_rate)
 {
     // Save new currency exchange rate info in cache
-  $nb_settings = NBR__get_settings();   // Re-get settings in case other piece updated something while we were pulling exchange rate API's...
+  $nbr_settings = NBR__get_settings();   // Re-get settings in case other piece updated something while we were pulling exchange rate API's...
   $nbr_settings['exchange_rates'][$currency_code][$requested_cache_method_type]['time-last-checked'] = time();
     $nbr_settings['exchange_rates'][$currency_code][$requested_cache_method_type]['exchange_rate'] = $exchange_rate;
     NBR__update_settings($nbr_settings);
@@ -258,7 +258,7 @@ function NBR__update_exchange_rate_cache($currency_code, $requested_cache_method
 // $rate_type: 'vwap' | 'realtime' | 'bestrate'
 function NBR__get_exchange_rate_from_cryptocompare($currency_code, $rate_type, $nbr_settings)
 {
-    $source_url = "https://min-api.cryptocompare.com/data/price?fsym=KRB&tsyms=" . $currency_code;
+    $source_url = "https://min-api.cryptocompare.com/data/price?fsym=NBR&tsyms=" . $currency_code;
     $result = @NBR__file_get_contents($source_url, false, $nbr_settings['exchange_rate_api_timeout_secs']);
 
     $rate_obj = @json_decode(trim($result), true);
@@ -403,7 +403,7 @@ function NBR__safe_string_escape($str="")
 function NBR__log_event($filename, $linenum, $message, $prepend_path="", $log_file_name='__log.php')
 {
     $log_filename   = dirname(__FILE__) . $prepend_path . '/' . $log_file_name;
-    $logfile_header = "<?php exit(':-)'); ?>\n" . '/* =============== Niobio Cash LOG file =============== */' . "\r\n";
+    $logfile_header = "<?php exit(':-)'); ?>\n" . '/* =============== NiobioCashWC LOG file =============== */' . "\r\n";
     $logfile_tail   = "\r\nEND";
 
     // Delete too long logfiles.
@@ -487,18 +487,18 @@ function NBR__is_gateway_valid_for_use(&$ret_reason_message=null)
         }
 
         if (!$address) {
-            $reason_message = __("Please specify Wallet Address in NBR plugin settings.", 'woocommerce');
+            $reason_message = __("Please specify Wallet Address in NiobioCash plugin settings.", 'woocommerce');
             $valid = false;
         }
         // @TODO
         // else if (!preg_match ('/^xpub[a-zA-Z0-9]{98}$/', $address))
         // {
-        //   $reason_message = __("Karbo Address ($address) is invalid. Must be 98 characters long, consisting of digits and letters.", 'woocommerce');
+        //   $reason_message = __("NiobioCash Address ($address) is invalid. Must be 98 characters long, consisting of digits and letters.", 'woocommerce');
         //   $valid = false;
         // }
 
         elseif ($address_balance === false) {
-            $reason_message = __("Niobio Cash address is not found in wallet.", 'woocommerce');
+            $reason_message = __("NiobioCash address is not found in wallet.", 'woocommerce');
             $valid = false;
         }
     }
@@ -517,7 +517,7 @@ function NBR__is_gateway_valid_for_use(&$ret_reason_message=null)
 
     $store_currency_code = 'USD';
     if ($store_currency_code != 'NBR') {
-        $currency_rate = NBR__get_exchange_rate_per_Karbo($store_currency_code, 'getfirst', false);
+        $currency_rate = NBR__get_exchange_rate_per_NiobioCash($store_currency_code, 'getfirst', false);
         if (!$currency_rate) {
             $valid = false;
 
